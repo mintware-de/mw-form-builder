@@ -1,0 +1,26 @@
+{
+  "extends": "../../tslint.json",
+  "rules": {
+    "directive-selector": [
+      true,
+      "attribute",
+      "mw",
+      "camelCase"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "mw",
+      "kebab-case"
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "member-variable-declaration"
+    ],
+    "member-access": true,
+    "no-inferrable-types": [true, "ignore-properties"],
+    "no-output-on-prefix": false
+  }
+}
