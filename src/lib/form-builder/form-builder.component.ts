@@ -64,8 +64,6 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
       this.renderTargets[slot.fieldName] = slot;
     });
 
-    console.log(this.renderTargets);
-
     Object.keys(this.renderTargets).map((name) => {
       const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
       const target = this.renderTargets[name].viewRef.createComponent(factory);
@@ -80,7 +78,6 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes.hasOwnProperty('formModel') && changes.formModel.currentValue != null) {
       this.rebuildForm();
     }

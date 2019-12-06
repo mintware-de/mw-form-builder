@@ -21,7 +21,7 @@ import {FormSlotComponent} from './form-slot/form-slot.component';
   exports: [
     FormBuilderComponent,
     FormSlotComponent,
-  ]
+  ],
 })
 export class FormBuilderModule {
 }
