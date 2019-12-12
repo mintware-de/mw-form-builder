@@ -12,7 +12,7 @@ import {FormSlotComponent} from './form-slot/form-slot.component';
     FormSlotComponent,
   ],
   entryComponents: [
-    FormFieldComponent
+    FormFieldComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -20,6 +20,7 @@ import {FormSlotComponent} from './form-slot/form-slot.component';
   ],
   exports: [
     FormBuilderComponent,
+    FormFieldComponent,
     FormSlotComponent,
   ],
 })

@@ -8,10 +8,11 @@ import {
   OnInit,
   Output, SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
 import {FormFieldComponent} from '../form-field/form-field.component';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
+import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 
 @Component({
   selector: 'mw-form-builder',
@@ -22,7 +23,6 @@ import {FormSlotComponent} from '../form-slot/form-slot.component';
         <mw-form-field *ngIf="renderTargets[field.key] == null"
                        [formGroup]="group"
                        [fieldName]="field.key"
-                       [renderedThroughBuilder]="true"
                        [fieldType]="field.value">
         </mw-form-field>
       </ng-container>
@@ -82,6 +82,9 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
       this.rebuildForm();
     }
     if (changes.hasOwnProperty('formData') && changes.formData.currentValue != null) {
+      if (!changes.hasOwnProperty('formModel')) {
+        this.buildArrayEntries(this.group.controls, this.formData);
+      }
       if (this.group != null) {
         this.group.patchValue(this.formData);
       }
@@ -111,8 +114,14 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
     const controls: { [key: string]: AbstractControl } = {};
 
     Object.keys(this.formModel).forEach((name) => {
-      controls[name] = new FormControl(null, this.formModel[name].validators);
+      let control: FormControl | FormArray = new FormControl(null, this.formModel[name].validators);
+      if (this.formModel[name] instanceof AbstractCollectionType) {
+        control = new FormArray([]);
+      }
+      controls[name] = control;
     });
+
+    this.buildArrayEntries(controls, this.formData);
 
     this.group = new FormGroup(controls);
   }
@@ -123,5 +132,39 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     this.onSubmit.emit(this.group.value);
+  }
+
+  private buildArrayEntries(controls: { [p: string]: AbstractControl }, data: any): void {
+    Object.keys(controls).forEach((name) => {
+      if (controls[name] instanceof FormArray) {
+        if ((controls[name] as any).clear != null) {
+          (controls[name] as FormArray).clear();
+        }
+
+        if (Array.isArray(data[name])) {
+          data[name].forEach((state) => {
+            (controls[name] as FormArray).push(new FormControl(state, this.formModel[name].validators));
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * Adds a new element to a array field
+   * @param fieldName The name of the field
+   * @param state The state of the field. (The field value)
+   */
+  public addArrayEntry(fieldName: string, state?: any): void {
+    (this.group.get(fieldName) as FormArray).push(new FormControl(state, this.formModel[fieldName].validators));
+  }
+
+  /**
+   * Removes an entry from a array field
+   * @param fieldName The name of the field
+   * @param index The index of the element to remove
+   */
+  public removeArrayEntry(fieldName: string, index: number): void {
+    (this.group.get(fieldName) as FormArray).removeAt(index);
   }
 }
