@@ -14,6 +14,8 @@ import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/form
 import {AbstractType} from '../form-type/abstract-type';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
 import {ModelHandler} from '../model-handler';
+import {AbstractGroupType} from '../form-type/abstract-group-type';
+import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 
 export interface FormModel {
   [key: string]: AbstractType<any>;
@@ -51,7 +53,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   }
 
   public ngOnInit(): void {
-    this.buildForm();
+    this.rebuildForm();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -77,9 +79,48 @@ export class FormBuilderComponent implements OnInit, OnChanges {
     }
 
     this.buildForm();
+    this.initializeCollectionFields(this.group, this.formModel, this.formData);
 
     if (this.group != null) {
       this.group.patchValue(res);
+    }
+  }
+
+  private initializeCollectionFields(group: FormGroup, model: FormModel, data: any): void {
+    Object.keys(model).forEach((name) => {
+      const formType = model[name];
+      if (formType instanceof AbstractGroupType) {
+        this.initializeCollectionFields(group.get(name) as FormGroup, (formType as AbstractGroupType<any>).options.model, data[name]);
+      } else if (formType instanceof AbstractCollectionType) {
+        this.initializeCollectionField(formType, group.get(name) as FormArray, data.hasOwnProperty(name) ? data[name] : null);
+      }
+    });
+  }
+
+  private initializeCollectionField(collection: AbstractCollectionType<any, any>, array: FormArray, data?: Array<any>): void {
+    const numberOfEntries = Array.isArray(data) ? data.length : 0;
+    array.clear();
+    if (numberOfEntries === 0) {
+      return;
+    }
+
+    const isGroup = collection.fieldInstance instanceof AbstractGroupType;
+    const isCollection = !isGroup && collection.fieldInstance instanceof AbstractCollectionType;
+    const isFormField = !isCollection && collection.fieldInstance instanceof AbstractType;
+
+    for (let i = 0; i < numberOfEntries; i++) {
+      if (isGroup) {
+        const childModel = (collection.fieldInstance as AbstractGroupType<any>).options.model;
+        const childFormGroup = ModelHandler.build(childModel);
+        this.initializeCollectionFields(childFormGroup, childModel, data[i]);
+        array.controls.push(childFormGroup);
+      } else if (isCollection) {
+        const childArray = new FormArray([], collection.fieldInstance.validators);
+        this.initializeCollectionField(collection.fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
+        array.controls.push(childArray);
+      } else if (isFormField) {
+        array.controls.push(new FormControl(null, collection.fieldInstance.validators));
+      }
     }
   }
 

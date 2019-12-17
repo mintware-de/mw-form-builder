@@ -14,6 +14,8 @@ export abstract class AbstractCollectionFormFieldComponent extends AbstractFormF
     if (this.fieldType.fieldInstance instanceof AbstractGroupType) {
       const field = ModelHandler.build(this.fieldType.fieldInstance.options.model);
       (this.element as FormArray).controls.push(field);
+    } else if (this.fieldType.fieldInstance instanceof AbstractCollectionType) {
+      (this.element as FormArray).controls.push(new FormArray([], this.fieldType.fieldInstance.validators));
     } else {
       (this.element as FormArray).controls.push(new FormControl(null, this.fieldType.fieldInstance.validators));
     }
