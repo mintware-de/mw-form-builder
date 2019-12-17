@@ -1,6 +1,7 @@
-import {Input} from '@angular/core';
-import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {Input, QueryList} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
+import {FormSlotComponent} from '../form-slot/form-slot.component';
 
 export abstract class AbstractFormFieldComponent<T extends AbstractType<any>> {
 
@@ -8,29 +9,17 @@ export abstract class AbstractFormFieldComponent<T extends AbstractType<any>> {
   public formGroup: FormGroup;
 
   @Input()
-  public fieldName: string;
+  public element: FormControl | FormArray | FormGroup | AbstractControl;
 
   @Input()
-  public arrayName: string;
+  public index: number;
 
   @Input()
   public fieldType: T;
 
-  public get identifier(): string {
-    if (!this.isArrayElement) {
-      return this.fieldName;
-    }
-    return `${this.arrayName}_${this.fieldName}`;
-  }
+  @Input()
+  public path: string;
 
-  public get el(): AbstractControl {
-    if (this.isArrayElement) {
-      return (this.formGroup.get(this.arrayName) as FormArray).at(Number(this.fieldName));
-    }
-    return this.formGroup.get(this.fieldName);
-  }
-
-  public get isArrayElement(): boolean {
-    return this.arrayName != null && this.arrayName !== '';
-  }
+  @Input()
+  public slots: QueryList<FormSlotComponent>;
 }

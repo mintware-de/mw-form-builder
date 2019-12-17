@@ -1,39 +1,39 @@
 import {
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ComponentFactoryResolver,
-  ContentChildren, EventEmitter,
-  Input, OnChanges,
+  ContentChildren,
+  EventEmitter,
+  Input,
+  OnChanges,
   OnInit,
-  Output, SimpleChanges,
+  Output,
+  QueryList,
+  SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
-import {FormFieldComponent} from '../form-field/form-field.component';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
-import {AbstractCollectionType} from '../form-type/abstract-collection-type';
+import {ModelHandler} from '../model-handler';
+
+export interface FormModel {
+  [key: string]: AbstractType<any>;
+}
 
 @Component({
   selector: 'mw-form-builder',
   template: `
+    <ng-content></ng-content>
     <form [formGroup]="group" (ngSubmit)="submit()" #form>
-      <ng-content></ng-content>
-      <ng-container *ngFor="let field of (formModel | keyvalue:orderAsGiven)">
-        <mw-form-field *ngIf="renderTargets[field.key] == null"
-                       [formGroup]="group"
-                       [fieldName]="field.key"
-                       [fieldType]="field.value">
-        </mw-form-field>
-      </ng-container>
+      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots" [isFirst]="true">
+      </mw-form-group>
     </form>
   `,
   styles: []
 })
-export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
+export class FormBuilderComponent implements OnInit, OnChanges {
 
   @Input()
-  public formModel: { [key: string]: AbstractType<any> };
+  public formModel: FormModel;
 
   @Input()
   public formData: { [key: string]: any };
@@ -42,39 +42,16 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
   public onSubmit: EventEmitter<any> = new EventEmitter<any>();
 
   @ContentChildren(FormSlotComponent, {descendants: true})
-  public slots: any;
-
-  public renderTargets: { [key: string]: FormSlotComponent } = {};
+  public slots: QueryList<FormSlotComponent>;
 
   public group: FormGroup;
 
-  public orderAsGiven = (): number => 1;
-
   constructor(private readonly cdr: ChangeDetectorRef,
-              private readonly cfr: ComponentFactoryResolver,
   ) {
   }
 
   public ngOnInit(): void {
     this.buildForm();
-  }
-
-  public ngAfterViewInit(): void {
-    this.slots.toArray().forEach((slot) => {
-      this.renderTargets[slot.fieldName] = slot;
-    });
-
-    Object.keys(this.renderTargets).map((name) => {
-      const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
-      const target = this.renderTargets[name].viewRef.createComponent(factory);
-      target.instance.formGroup = this.group;
-      target.instance.fieldName = name;
-      target.instance.fieldType = this.formModel[name];
-    });
-
-    this.group.patchValue(this.formData);
-
-    this.cdr.detectChanges();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -83,7 +60,7 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
     }
     if (changes.hasOwnProperty('formData') && changes.formData.currentValue != null) {
       if (!changes.hasOwnProperty('formModel')) {
-        this.buildArrayEntries(this.group.controls, this.formData);
+        // this.buildArrayEntries(this.group.controls, this.formData);
       }
       if (this.group != null) {
         this.group.patchValue(this.formData);
@@ -106,48 +83,28 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-
   /**
    * This method builds the FormGroup
    */
-  public buildForm(): void {
-    const controls: { [key: string]: AbstractControl } = {};
-
-    Object.keys(this.formModel).forEach((name) => {
-      let control: FormControl | FormArray = new FormControl(null, this.formModel[name].validators);
-      if (this.formModel[name] instanceof AbstractCollectionType) {
-        control = new FormArray([]);
-      }
-      controls[name] = control;
-    });
-
-    this.buildArrayEntries(controls, this.formData);
-
-    this.group = new FormGroup(controls);
+  private buildForm(): void {
+    this.group = ModelHandler.build(this.formModel);
   }
 
-  public submit(): void {
+
+  public submit(): any {
+    Object.keys(this.group.controls).forEach((field) => {
+      const control = this.group.get(field);
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    });
+
     if (!this.group.valid) {
       return;
     }
 
     this.onSubmit.emit(this.group.value);
-  }
 
-  private buildArrayEntries(controls: { [p: string]: AbstractControl }, data: any): void {
-    Object.keys(controls).forEach((name) => {
-      if (controls[name] instanceof FormArray) {
-        if ((controls[name] as any).clear != null) {
-          (controls[name] as FormArray).clear();
-        }
-
-        if (Array.isArray(data[name])) {
-          data[name].forEach((state) => {
-            (controls[name] as FormArray).push(new FormControl(state, this.formModel[name].validators));
-          });
-        }
-      }
-    });
+    return this.group.value;
   }
 
   /**
@@ -166,5 +123,18 @@ export class FormBuilderComponent implements OnInit, OnChanges, AfterViewInit {
    */
   public removeArrayEntry(fieldName: string, index: number): void {
     (this.group.get(fieldName) as FormArray).removeAt(index);
+  }
+
+  public get errors(): { [key: string]: ValidationErrors } {
+    const errors = {};
+
+    Object.keys(this.group.controls).forEach((controlName) => {
+      if (this.group.controls[controlName].errors == null) {
+        return;
+      }
+      errors[controlName] = this.group.controls[controlName].errors;
+    });
+
+    return Object.keys(errors).length === 0 ? null : errors;
   }
 }
