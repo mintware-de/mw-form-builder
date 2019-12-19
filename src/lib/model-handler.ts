@@ -24,10 +24,10 @@ export class ModelHandler {
   private static handleField(field: AbstractCollectionType<any, any> | AbstractGroupType<any> | AbstractType<any>): AbstractControl {
     let component: AbstractControl;
     if (field instanceof AbstractCollectionType) {
-      component = new FormArray([]);
+      component = new FormArray([], field.validators);
       ModelHandler.handleArray(field as AbstractCollectionType<any, any>, component as FormArray);
     } else if (field instanceof AbstractGroupType) {
-      component = new FormGroup({});
+      component = new FormGroup({}, field.validators);
       ModelHandler.handleModel(field.options.model, component as FormGroup);
     } else {
       component = new FormControl(null, field.validators);

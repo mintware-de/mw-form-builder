@@ -19,7 +19,7 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
     this.render();
   }
 
-  private render(): void {
+  public render(): void {
     if (this.fieldType == null) {
       return;
     }
@@ -35,5 +35,7 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
     (component.instance as AbstractFormFieldComponent<any>).fieldType = this.fieldType;
     (component.instance as AbstractFormFieldComponent<any>).slots = this.slots;
     (component.instance as AbstractFormFieldComponent<any>).path = this.path;
+    (component.instance as AbstractFormFieldComponent<any>).index = this.index;
+    component.changeDetectorRef.detectChanges();
   }
 }

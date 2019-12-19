@@ -1,15 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges,
-} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
@@ -26,7 +15,7 @@ export interface FormModel {
   template: `
     <ng-content></ng-content>
     <form [formGroup]="group" (ngSubmit)="submit()" #form>
-      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots" [isFirst]="true">
+      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots">
       </mw-form-group>
     </form>
   `,
@@ -48,10 +37,6 @@ export class FormBuilderComponent implements OnInit, OnChanges {
 
   public group: FormGroup;
 
-  constructor(private readonly cdr: ChangeDetectorRef,
-  ) {
-  }
-
   public ngOnInit(): void {
     this.rebuildForm();
   }
@@ -62,24 +47,24 @@ export class FormBuilderComponent implements OnInit, OnChanges {
     }
     if (changes.hasOwnProperty('formData') && changes.formData.currentValue != null) {
       if (!changes.hasOwnProperty('formModel')) {
-        // this.buildArrayEntries(this.group.controls, this.formData);
+        this.initializeCollectionFields(this.group, this.formModel, this.formData);
       }
       if (this.group != null) {
         this.group.patchValue(this.formData);
       }
     }
-
-    this.cdr.detectChanges();
   }
 
   public rebuildForm(): void {
     let res = {};
     if (this.group != null) {
       res = Object.assign({}, this.group.value);
+    } else if (this.formData != null) {
+      res = Object.assign({}, this.formData);
     }
 
     this.buildForm();
-    this.initializeCollectionFields(this.group, this.formModel, this.formData);
+    this.initializeCollectionFields(this.group, this.formModel, res);
 
     if (this.group != null) {
       this.group.patchValue(res);
@@ -89,17 +74,22 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   private initializeCollectionFields(group: FormGroup, model: FormModel, data: any): void {
     Object.keys(model).forEach((name) => {
       const formType = model[name];
+      const childData = data.hasOwnProperty(name) ? data[name] : null;
+
+      const control = group.get(name);
       if (formType instanceof AbstractGroupType) {
-        this.initializeCollectionFields(group.get(name) as FormGroup, (formType as AbstractGroupType<any>).options.model, data[name]);
+        this.initializeCollectionFields(control as FormGroup, (formType as AbstractGroupType<any>).options.model, childData);
       } else if (formType instanceof AbstractCollectionType) {
-        this.initializeCollectionField(formType, group.get(name) as FormArray, data.hasOwnProperty(name) ? data[name] : null);
+        this.initializeCollectionField(formType, control as FormArray, childData);
       }
     });
   }
 
   private initializeCollectionField(collection: AbstractCollectionType<any, any>, array: FormArray, data?: Array<any>): void {
     const numberOfEntries = Array.isArray(data) ? data.length : 0;
-    array.clear();
+    if (array.clear != null) {
+      array.clear();
+    }
     if (numberOfEntries === 0) {
       return;
     }
@@ -112,10 +102,12 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       if (isGroup) {
         const childModel = (collection.fieldInstance as AbstractGroupType<any>).options.model;
         const childFormGroup = ModelHandler.build(childModel);
+        childFormGroup.setParent(array);
         this.initializeCollectionFields(childFormGroup, childModel, data[i]);
         array.controls.push(childFormGroup);
       } else if (isCollection) {
         const childArray = new FormArray([], collection.fieldInstance.validators);
+        childArray.setParent(array);
         this.initializeCollectionField(collection.fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
         array.controls.push(childArray);
       } else if (isFormField) {
@@ -148,34 +140,35 @@ export class FormBuilderComponent implements OnInit, OnChanges {
     return this.group.value;
   }
 
-  /**
-   * Adds a new element to a array field
-   * @param fieldName The name of the field
-   * @param state The state of the field. (The field value)
-   */
-  public addArrayEntry(fieldName: string, state?: any): void {
-    (this.group.get(fieldName) as FormArray).push(new FormControl(state, this.formModel[fieldName].validators));
-  }
+  public getErrors(group?: FormGroup | FormArray): { [key: string]: ValidationErrors } | ValidationErrors[] | null {
+    const errors = group instanceof FormArray ? [] : {};
 
-  /**
-   * Removes an entry from a array field
-   * @param fieldName The name of the field
-   * @param index The index of the element to remove
-   */
-  public removeArrayEntry(fieldName: string, index: number): void {
-    (this.group.get(fieldName) as FormArray).removeAt(index);
-  }
+    if (group == null) {
+      group = this.group;
+    }
 
-  public get errors(): { [key: string]: ValidationErrors } {
-    const errors = {};
-
-    Object.keys(this.group.controls).forEach((controlName) => {
-      if (this.group.controls[controlName].errors == null) {
-        return;
+    let idx = 0;
+    Object.keys(group.controls).forEach((name) => {
+      idx++;
+      const control = group.get(name);
+      if (control instanceof FormArray || control instanceof FormGroup) {
+        const tmpErrors = this.getErrors(control as (FormArray | FormGroup));
+        if (tmpErrors != null) {
+          errors[name] = tmpErrors;
+        }
+      } else if (control instanceof FormControl) {
+        if (control.errors == null) {
+          return null;
+        }
+        if (group instanceof FormArray) {
+          (errors as ValidationErrors[])[idx] = control.errors;
+        } else {
+          errors[name] = control.errors;
+        }
       }
-      errors[controlName] = this.group.controls[controlName].errors;
     });
 
-    return Object.keys(errors).length === 0 ? null : errors;
+    return (group instanceof FormGroup && Object.keys(errors).length === 0)
+    || Array.isArray(errors) && errors.length === 0 ? null : errors;
   }
 }
