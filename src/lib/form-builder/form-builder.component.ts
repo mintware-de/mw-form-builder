@@ -87,9 +87,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
 
   private initializeCollectionField(collection: AbstractCollectionType<any, any>, array: FormArray, data?: Array<any>): void {
     const numberOfEntries = Array.isArray(data) ? data.length : 0;
-    if (array.clear != null) {
-      array.clear();
-    }
+    [...new Array(array.controls.length).keys()].forEach((n) => array.removeAt(n));
     if (numberOfEntries === 0) {
       return;
     }

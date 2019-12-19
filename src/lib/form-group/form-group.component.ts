@@ -19,17 +19,15 @@ import {FormArray, FormControl} from '@angular/forms';
   selector: 'mw-form-group',
   template: `
     <ng-content></ng-content>
-    <ng-container [formGroup]="formGroup">
-      <ng-container *ngFor="let field of (model | keyvalue:orderAsGiven)">
-        <mw-form-field *ngIf="renderTargets[field.key] == null"
-                       [formGroup]="element"
-                       [element]="element.get(field.key)"
-                       [fieldType]="field.value"
-                       [path]="pathForField(field.key)"
-                       [index]="indexFromParent"
-                       [slots]="slots">
-        </mw-form-field>
-      </ng-container>
+    <ng-container *ngFor="let field of (model | keyvalue:orderAsGiven)">
+      <mw-form-field *ngIf="renderTargets[field.key] == null"
+                     [formGroup]="element"
+                     [element]="element.get(field.key)"
+                     [fieldType]="field.value"
+                     [path]="pathForField(field.key)"
+                     [index]="indexFromParent"
+                     [slots]="slots">
+      </mw-form-field>
     </ng-container>
   `,
 })
@@ -75,10 +73,9 @@ export class FormGroupComponent extends AbstractFormFieldComponent<any> implemen
   public ngAfterViewInit(): void {
     if (this.mySlots != null) {
       this.renderElementsInSlots();
-      this.cdr.detectChanges();
     }
+    this.cdr.detectChanges();
   }
-
 
   public ngOnChanges(changes: SimpleChanges): void {
     let wasRendered = false;
