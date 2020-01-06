@@ -107,6 +107,7 @@ export class FormGroupComponent extends AbstractFormFieldComponent<any> implemen
         target.instance.path = this.pathForField(name);
         target.instance.fieldType = this.model[name];
         target.instance.index = this.indexFromParent;
+
         target.instance.render();
       });
     }
@@ -123,10 +124,9 @@ export class FormGroupComponent extends AbstractFormFieldComponent<any> implemen
         if (name.startsWith('.')) {
           name = name.substr(1);
         }
-        if (name.indexOf('.') > 0) {
-          return;
+        if (name.indexOf('.') < 0 && name !== '') {
+          this.renderTargets[name] = slot;
         }
-        this.renderTargets[name] = slot;
       });
     }
 

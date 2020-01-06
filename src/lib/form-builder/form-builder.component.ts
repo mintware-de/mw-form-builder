@@ -74,7 +74,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   private initializeCollectionFields(group: FormGroup, model: FormModel, data: any): void {
     Object.keys(model).forEach((name) => {
       const formType = model[name];
-      const childData = data.hasOwnProperty(name) ? data[name] : null;
+      const childData = (data != null && data.hasOwnProperty(name)) ? data[name] : null;
 
       const control = group.get(name);
       if (formType instanceof AbstractGroupType) {
@@ -92,24 +92,35 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       return;
     }
 
-    const isGroup = collection.fieldInstance instanceof AbstractGroupType;
-    const isCollection = !isGroup && collection.fieldInstance instanceof AbstractCollectionType;
-    const isFormField = !isCollection && collection.fieldInstance instanceof AbstractType;
+    const fieldInstance = collection.fieldInstance;
+    const isGroup = fieldInstance instanceof AbstractGroupType;
+    const isCollection = !isGroup && fieldInstance instanceof AbstractCollectionType;
+    const isFormField = !isCollection && fieldInstance instanceof AbstractType;
 
     for (let i = 0; i < numberOfEntries; i++) {
       if (isGroup) {
-        const childModel = (collection.fieldInstance as AbstractGroupType<any>).options.model;
-        const childFormGroup = ModelHandler.build(childModel);
+        const childModel = (fieldInstance as AbstractGroupType<any>).options.model;
+        const childFormGroup = ModelHandler.build(childModel, this);
         childFormGroup.setParent(array);
+
+        if (fieldInstance.disabled) {
+          childFormGroup.disable();
+        }
+
         this.initializeCollectionFields(childFormGroup, childModel, data[i]);
         array.controls.push(childFormGroup);
       } else if (isCollection) {
-        const childArray = new FormArray([], collection.fieldInstance.validators);
+        const childArray = new FormArray([], fieldInstance.validators);
         childArray.setParent(array);
-        this.initializeCollectionField(collection.fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
+
+        if (fieldInstance.disabled) {
+          childArray.disable();
+        }
+
+        this.initializeCollectionField(fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
         array.controls.push(childArray);
       } else if (isFormField) {
-        array.controls.push(new FormControl(null, collection.fieldInstance.validators));
+        array.controls.push(new FormControl({value: null, disabled: fieldInstance.disabled}, fieldInstance.validators));
       }
     }
   }
@@ -118,7 +129,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
    * This method builds the FormGroup
    */
   private buildForm(): void {
-    this.group = ModelHandler.build(this.formModel);
+    this.group = ModelHandler.build(this.formModel, this);
   }
 
 

@@ -12,7 +12,7 @@ export abstract class AbstractCollectionFormFieldComponent extends AbstractFormF
 
   public addEntry(): void {
     if (this.fieldType.fieldInstance instanceof AbstractGroupType) {
-      const field = ModelHandler.build(this.fieldType.fieldInstance.options.model);
+      const field = ModelHandler.build(this.fieldType.fieldInstance.options.model, this.fieldType.builderInstance);
       field.setParent(this.element as FormArray);
       (this.element as FormArray).controls.push(field);
     } else if (this.fieldType.fieldInstance instanceof AbstractCollectionType) {

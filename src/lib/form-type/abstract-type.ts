@@ -9,6 +9,10 @@ export abstract class AbstractType<T> {
 
   public abstract get validators(): ValidatorFn[];
 
+  public get disabled(): boolean {
+    return false;
+  }
+
   constructor(public options: T,
   ) {
   }
