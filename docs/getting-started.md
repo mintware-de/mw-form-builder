@@ -22,3 +22,24 @@ import {FormBuilderModule} from "mw-form-builder";
 export class AppModule {
 }
 ```
+
+## Creating form elements
+The form builder is designed for reusability.
+Every field of a form consists of three parts:
+- a custom Angular Component which contains the code for displaying the field,
+- a form field type, which is a subtype of `AbstractType` and is used in the model,
+- an configuration object.
+
+Additionally to this, the form builder knows three types of form fields:
+- simple form fields, for example a text field or a password field,
+- collection fields which represents a collection of any field type,
+- group fields, which are just nested form fields.
+
+Check out the specific guides:
+- [Creating simple form fields](./simple-form-fields.md)
+- [Creating collection form fields](./collection-form-fields.md)
+- [Creating form groups](./form-groups.md)
+
+
+## Rendering Forms
+See [Rendering Forms](./render-forms.md)
