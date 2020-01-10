@@ -20,7 +20,7 @@
       "member-variable-declaration"
     ],
     "member-access": true,
-    "no-inferrable-types": [true, "ignore-properties"],
+    "no-inferrable-types": [true, "ignore-properties", "ignore-params"],
     "no-output-on-prefix": false
   }
 }

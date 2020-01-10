@@ -1,39 +1,25 @@
-import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewContainerRef} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
+import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
+import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {FormGroup} from '@angular/forms';
-import {AbstractType} from '../form-type/abstract-type';
 
 @Component({
   selector: 'mw-form-field',
   template: '',
 })
-export class FormFieldComponent implements OnInit, OnChanges {
-
-  @Input()
-  public formGroup: FormGroup;
-
-  @Input()
-  public fieldName: string;
-
-  @Input()
-  public fieldType: AbstractType<any>;
-
-  @Input()
-  public renderedThroughBuilder: boolean = false;
+export class FormFieldComponent extends AbstractFormFieldComponent<any> implements OnChanges {
 
   constructor(public readonly viewRef: ViewContainerRef,
               public readonly cfr: ComponentFactoryResolver,
   ) {
-  }
-
-  public ngOnInit(): void {
-    this.render();
+    super();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
     this.render();
   }
 
-  private render(): void {
+  public render(): void {
     if (this.fieldType == null) {
       return;
     }
@@ -42,8 +28,14 @@ export class FormFieldComponent implements OnInit, OnChanges {
 
     const factory = this.cfr.resolveComponentFactory(this.fieldType.component);
     const component = this.viewRef.createComponent(factory);
-    (component.instance as any).formGroup = this.formGroup;
-    (component.instance as any).fieldName = this.fieldName;
-    (component.instance as any).fieldType = this.fieldType;
+
+    const isGroup = this.fieldType instanceof AbstractGroupType;
+    (component.instance as AbstractFormFieldComponent<any>).formGroup = isGroup ? this.element as FormGroup : this.formGroup;
+    (component.instance as AbstractFormFieldComponent<any>).element = this.element;
+    (component.instance as AbstractFormFieldComponent<any>).fieldType = this.fieldType;
+    (component.instance as AbstractFormFieldComponent<any>).slots = this.slots;
+    (component.instance as AbstractFormFieldComponent<any>).path = this.path;
+    (component.instance as AbstractFormFieldComponent<any>).index = this.index;
+    component.changeDetectorRef.detectChanges();
   }
 }

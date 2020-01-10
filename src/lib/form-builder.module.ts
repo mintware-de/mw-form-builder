@@ -4,15 +4,18 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {FormFieldComponent} from './form-field/form-field.component';
 import {CommonModule} from '@angular/common';
 import {FormSlotComponent} from './form-slot/form-slot.component';
+import {FormGroupComponent} from './form-group/form-group.component';
 
 @NgModule({
   declarations: [
     FormBuilderComponent,
+    FormGroupComponent,
     FormFieldComponent,
     FormSlotComponent,
   ],
   entryComponents: [
-    FormFieldComponent
+    FormFieldComponent,
+    FormGroupComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -20,6 +23,8 @@ import {FormSlotComponent} from './form-slot/form-slot.component';
   ],
   exports: [
     FormBuilderComponent,
+    FormGroupComponent,
+    FormFieldComponent,
     FormSlotComponent,
   ],
 })
