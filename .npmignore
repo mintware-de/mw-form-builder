@@ -1,0 +1,7 @@
+docs/
+.idea/
+karma.conf.js
+/**/*.spec.ts
+/**/*.spec.json
+tslint.json
+src/test.ts
