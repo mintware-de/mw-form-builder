@@ -5,12 +5,18 @@
     "email": "julian@mintware.de",
     "url": "https://www.mintware.de"
   },
+  "contributors": [
+    {
+      "name": "Billbee GmbH",
+      "url": "https://www.billbee.io"
+    }
+  ],
   "repository": {
     "url": "https://github.com/mintware-de/mw-form-builder",
     "type": "git"
   },
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": "^7.2.0 || ^8.0.0",
     "@angular/core": "^7.2.0 || ^8.0.0",
