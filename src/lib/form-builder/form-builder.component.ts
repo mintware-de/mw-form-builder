@@ -1,10 +1,11 @@
 import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
-import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
+import {ValidationErrors} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
 import {ModelHandler} from '../model-handler';
 import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
+import {FormArray, FormControl, FormGroup} from '../abstraction';
 
 export interface FormModel {
   [key: string]: AbstractType<any>;
@@ -65,7 +66,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       res = Object.assign({}, this.formData);
     }
 
-    this.buildForm();
+    this.group = ModelHandler.build(this.formModel, this);
     this.initializeCollectionFields(this.group, this.formModel, res);
 
     if (this.group != null) {
@@ -126,14 +127,6 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       }
     }
   }
-
-  /**
-   * This method builds the FormGroup
-   */
-  private buildForm(): void {
-    this.group = ModelHandler.build(this.formModel, this);
-  }
-
 
   public submit(): any {
     Object.keys(this.group.controls).forEach((field) => {

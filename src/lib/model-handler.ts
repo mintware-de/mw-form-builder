@@ -1,8 +1,8 @@
 import {FormBuilderComponent, FormModel} from './form-builder/form-builder.component';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {AbstractCollectionType} from './form-type/abstract-collection-type';
 import {AbstractGroupType} from './form-type/abstract-group-type';
 import {AbstractType} from './form-type/abstract-type';
+import {FormArray, FormControl, FormGroup} from './abstraction';
 
 export class ModelHandler {
   public static build(model: FormModel, builderInstance: FormBuilderComponent): FormGroup {
@@ -30,8 +30,8 @@ export class ModelHandler {
     });
   }
 
-  private static handleField(field: AbstractType<any>, builderInstance: FormBuilderComponent): AbstractControl {
-    let component: AbstractControl;
+  private static handleField(field: AbstractType<any>, builderInstance: FormBuilderComponent): FormArray | FormGroup | FormControl {
+    let component: FormArray | FormGroup | FormControl;
     if (field instanceof AbstractCollectionType) {
       component = new FormArray([], field.validators);
       ModelHandler.handleArray(field as AbstractCollectionType<any, any>, component as FormArray, builderInstance);

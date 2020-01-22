@@ -1,8 +1,8 @@
-import {FormArray, FormControl} from '@angular/forms';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {ModelHandler} from '../model-handler';
+import {FormArray, FormControl} from '../abstraction';
 
 export abstract class AbstractCollectionFormFieldComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
 

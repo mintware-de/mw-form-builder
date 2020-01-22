@@ -13,7 +13,7 @@ import {FormModel} from '../form-builder/form-builder.component';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
 import {FormFieldComponent} from '../form-field/form-field.component';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
-import {FormArray, FormControl} from '@angular/forms';
+import {FormArray, FormControl, FormGroup} from '../abstraction';
 
 @Component({
   selector: 'mw-form-group',
@@ -109,6 +109,7 @@ export class FormGroupComponent extends AbstractFormFieldComponent<any> implemen
         target.instance.index = this.indexFromParent;
 
         target.instance.render();
+        (this.element as FormGroup).isInitialized = true;
       });
     }
   }
