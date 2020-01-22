@@ -38,7 +38,9 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   public group: FormGroup;
 
   public ngOnInit(): void {
-    this.rebuildForm();
+    if (this.group == null) {
+      this.rebuildForm();
+    }
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
