@@ -14,7 +14,7 @@ export class ModelHandler {
   private static handleModel(model: FormModel, group: FormGroup, builderInstance: FormBuilderComponent): void {
     Object.keys(model).forEach((name) => {
       const field = model[name];
-      if (field != null) {
+      if (field) {
         const control = ModelHandler.handleField(field, builderInstance);
         control.setParent(group);
 
@@ -23,7 +23,7 @@ export class ModelHandler {
         }
 
         group.addControl(name, control);
-        if (field.builderInstance == null && builderInstance != null) {
+        if (field.builderInstance == null && builderInstance) {
           field.builderInstance = builderInstance;
         }
       }
@@ -32,14 +32,15 @@ export class ModelHandler {
 
   private static handleField(field: AbstractType<any>, builderInstance: FormBuilderComponent): FormArray | FormGroup | FormControl {
     let component: FormArray | FormGroup | FormControl;
+
     if (field instanceof AbstractCollectionType) {
-      component = new FormArray([], field.validators);
+      component = new FormArray([], field.controlOptions);
       ModelHandler.handleArray(field as AbstractCollectionType<any, any>, component as FormArray, builderInstance);
     } else if (field instanceof AbstractGroupType) {
-      component = new FormGroup({}, field.validators);
+      component = new FormGroup({}, field.controlOptions);
       ModelHandler.handleModel(field.options.model, component as FormGroup, builderInstance);
     } else {
-      component = new FormControl({value: null, disabled: field.disabled}, field.validators);
+      component = new FormControl({value: null, disabled: field.disabled}, field.controlOptions);
     }
     return component;
   }

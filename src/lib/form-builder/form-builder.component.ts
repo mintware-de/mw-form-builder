@@ -16,7 +16,7 @@ export interface FormModel {
   template: `
     <ng-content></ng-content>
     <form [formGroup]="group" (ngSubmit)="submit()" #form>
-      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots">
+      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots" [isRootGroup]="true">
       </mw-form-group>
     </form>
   `,
@@ -45,14 +45,14 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('formModel') && changes.formModel.currentValue != null) {
+    if ('formModel' in changes && changes.formModel.currentValue) {
       this.rebuildForm();
     }
-    if (changes.hasOwnProperty('formData') && changes.formData.currentValue != null) {
-      if (!changes.hasOwnProperty('formModel')) {
+    if ('formData' in changes && changes.formData.currentValue) {
+      if (!('formModel' in changes)) {
         this.initializeCollectionFields(this.group, this.formModel, this.formData);
       }
-      if (this.group != null) {
+      if (this.group) {
         this.group.patchValue(this.formData);
       }
     }
@@ -60,16 +60,16 @@ export class FormBuilderComponent implements OnInit, OnChanges {
 
   public rebuildForm(): void {
     let res = {};
-    if (this.group != null) {
+    if (this.group) {
       res = Object.assign({}, this.group.value);
-    } else if (this.formData != null) {
+    } else if (this.formData) {
       res = Object.assign({}, this.formData);
     }
 
     this.group = ModelHandler.build(this.formModel, this);
     this.initializeCollectionFields(this.group, this.formModel, res);
 
-    if (this.group != null) {
+    if (this.group) {
       this.group.patchValue(res);
     }
   }
@@ -77,7 +77,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   private initializeCollectionFields(group: FormGroup, model: FormModel, data: any): void {
     Object.keys(model).forEach((name) => {
       const formType = model[name];
-      const childData = (data != null && data.hasOwnProperty(name)) ? data[name] : null;
+      const childData = (data && name in data) ? data[name] : null;
 
       const control = group.get(name);
       if (formType instanceof AbstractGroupType) {
@@ -113,7 +113,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
         this.initializeCollectionFields(childFormGroup, childModel, data[i]);
         array.controls.push(childFormGroup);
       } else if (isCollection) {
-        const childArray = new FormArray([], fieldInstance.validators);
+        const childArray = new FormArray([], fieldInstance.controlOptions);
         childArray.setParent(array);
 
         if (fieldInstance.disabled) {
@@ -123,7 +123,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
         this.initializeCollectionField(fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
         array.controls.push(childArray);
       } else if (isFormField) {
-        array.controls.push(new FormControl({value: null, disabled: fieldInstance.disabled}, fieldInstance.validators));
+        array.controls.push(new FormControl({value: null, disabled: fieldInstance.disabled}, fieldInstance.controlOptions));
       }
     }
   }
@@ -157,7 +157,7 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       const control = group.get(name);
       if (control instanceof FormArray || control instanceof FormGroup) {
         const tmpErrors = this.getErrors(control as (FormArray | FormGroup));
-        if (tmpErrors != null) {
+        if (tmpErrors) {
           errors[name] = tmpErrors;
         }
       } else if (control instanceof FormControl) {

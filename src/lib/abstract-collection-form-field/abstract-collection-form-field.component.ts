@@ -16,9 +16,9 @@ export abstract class AbstractCollectionFormFieldComponent extends AbstractFormF
       field.setParent(this.element as FormArray);
       (this.element as FormArray).controls.push(field);
     } else if (this.fieldType.fieldInstance instanceof AbstractCollectionType) {
-      (this.element as FormArray).controls.push(new FormArray([], this.fieldType.fieldInstance.validators));
+      (this.element as FormArray).controls.push(new FormArray([], this.fieldType.fieldInstance.controlOptions));
     } else {
-      (this.element as FormArray).controls.push(new FormControl(null, this.fieldType.fieldInstance.validators));
+      (this.element as FormArray).controls.push(new FormControl(null, this.fieldType.fieldInstance.controlOptions));
     }
   }
 }

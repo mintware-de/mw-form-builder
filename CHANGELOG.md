@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0-beta1
+Improved performance
+- Created own FormArray, FormGroup and FormControl which extends from the default Angular classes.
+- This abstractions blocks the `updateValueAndValidity` calls until the form rendering has finished
+- Checking in the `FormGroupComponent.ngAfterViewInit` hook, if the form was already rendered and block unnecessary rebuilding.
+
+Other changes:
+- Replaced `x.hasOwnProperty('y')` by `'y' in x` and replaced `if (x != null)` by `if (x)` to improve the readability.
+- Added `asyncValidators` and `updateOn` to the AbstractType and made `validators` non abstract
+
 ## 1.0.0
 Thanks to [@billbeeio](https://github.com/billbeeio) for many improvements ([PR#1](https://github.com/mintware-de/mw-form-builder/pull/1))
 
