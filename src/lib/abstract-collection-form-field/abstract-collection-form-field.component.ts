@@ -2,7 +2,7 @@ import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {ModelHandler} from '../model-handler';
-import {FormArray, FormControl} from '../abstraction';
+import {FormArray, FormControl, FormGroup} from '../abstraction';
 
 export abstract class AbstractCollectionFormFieldComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
 
@@ -11,14 +11,17 @@ export abstract class AbstractCollectionFormFieldComponent extends AbstractFormF
   }
 
   public addEntry(): void {
+    let newControl: FormArray | FormControl | FormGroup;
     if (this.fieldType.fieldInstance instanceof AbstractGroupType) {
       const field = ModelHandler.build(this.fieldType.fieldInstance.options.model, this.fieldType.builderInstance);
       field.setParent(this.element as FormArray);
-      (this.element as FormArray).controls.push(field);
+      newControl = field;
     } else if (this.fieldType.fieldInstance instanceof AbstractCollectionType) {
-      (this.element as FormArray).controls.push(new FormArray([], this.fieldType.fieldInstance.controlOptions));
+      newControl = new FormArray([], this.fieldType.fieldInstance.controlOptions);
     } else {
-      (this.element as FormArray).controls.push(new FormControl(null, this.fieldType.fieldInstance.controlOptions));
+      newControl = new FormControl(null, this.fieldType.fieldInstance.controlOptions);
     }
+    newControl.initHandler.setIsInitialized(true);
+    (this.element as FormArray).controls.push(newControl);
   }
 }

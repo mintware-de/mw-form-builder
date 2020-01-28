@@ -1,4 +1,14 @@
-import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  ContentChildren,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges
+} from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
@@ -51,6 +61,8 @@ export class FormBuilderComponent implements OnInit, OnChanges {
     if ('formData' in changes && changes.formData.currentValue) {
       if (!('formModel' in changes)) {
         this.initializeCollectionFields(this.group, this.formModel, this.formData);
+        this.group.initHandler.setIsInitialized(false);
+        this.group.initHandler.setIsInitialized(true);
       }
       if (this.group) {
         this.group.patchValue(this.formData);
@@ -90,7 +102,8 @@ export class FormBuilderComponent implements OnInit, OnChanges {
 
   private initializeCollectionField(collection: AbstractCollectionType<any, any>, array: FormArray, data?: Array<any>): void {
     const numberOfEntries = Array.isArray(data) ? data.length : 0;
-    [...new Array(array.controls.length).keys()].forEach((n) => array.removeAt(n));
+
+    array.controls.splice(0, array.controls.length);
     if (numberOfEntries === 0) {
       return;
     }

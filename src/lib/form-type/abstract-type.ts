@@ -1,7 +1,6 @@
 import {Type} from '@angular/core';
-import {AsyncValidatorFn, ValidatorFn} from '@angular/forms';
+import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
 import {FormBuilderComponent} from '../form-builder/form-builder.component';
-import {AbstractControlOptions} from '@angular/forms/src/model';
 
 export abstract class AbstractType<T> {
   public abstract readonly component: Type<any>;
