@@ -27,9 +27,7 @@ export class ModelHandler {
           field.builderInstance = builderInstance;
         }
 
-        if (field.control == null) {
-          field.control = control;
-        }
+        field.control = control;
       }
     });
   }

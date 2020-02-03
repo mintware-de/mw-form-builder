@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0-beta3
+- Fixed FormGroup, FormControl and FormArray initialization when the form was rebuild
+- Added a `control` field to the AbstractType which holds the form control 
+
+## 1.1.0-beta2
+Fixed wrong bool check in FormControl abstractions
+
 ## 1.1.0-beta1
 Improved performance
 - Created own FormArray, FormGroup and FormControl which extends from the default Angular classes.
