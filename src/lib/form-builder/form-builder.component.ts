@@ -71,9 +71,11 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   }
 
   public rebuildForm(): void {
-    let res = {};
+    let res = null;
+    let groupIsInitialized = false;
     if (this.group) {
       res = Object.assign({}, this.group.value);
+      groupIsInitialized = this.group.initHandler.isInitialized;
     } else if (this.formData) {
       res = Object.assign({}, this.formData);
     }
@@ -81,7 +83,10 @@ export class FormBuilderComponent implements OnInit, OnChanges {
     this.group = ModelHandler.build(this.formModel, this);
     this.initializeCollectionFields(this.group, this.formModel, res);
 
-    if (this.group) {
+    if (this.group && res) {
+      if (groupIsInitialized) {
+        this.group.initHandler.setIsInitialized(true);
+      }
       this.group.patchValue(res);
     }
   }
