@@ -29,7 +29,7 @@ import {AbstractType} from 'mw-form-builder';
 export class TextFormType extends AbstractType<ITextFormTypeConfiguration> {
 
   // This component is created in the next step!
-  readonly component: Type<any> = TextFormFieldComponent;
+  readonly component: Constructor = TextFormFieldComponent;
 
   constructor(public options: ITextFormTypeConfiguration) {
     // Set the configuration defaults

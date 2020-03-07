@@ -12,3 +12,5 @@ export * from './lib/form-builder.module';
 export * from './lib/form-type/abstract-type';
 export * from './lib/form-type/abstract-group-type';
 export * from './lib/form-type/abstract-collection-type';
+
+export * from './lib/types';

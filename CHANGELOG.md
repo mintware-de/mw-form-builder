@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0-beta4
+Code cleanup
+- Created `Constructor` types instead of using `new (...args: any[]) => any`
+- Using the `ModelHandler` in the `AbstractCollectionFormFieldComponent`
+- Created a `AbstractFormControl` type to reduce usage of any
+- Set the return Type of the onSubmit EventEmitter in the form explicitly
+- Using the `ModelHandler` in the `FormComponent.initializeCollectionField` method
+- Made `ModelHandler.buildSingleField` public
+- Removed a lot of `as` and using `instanceof` instead
+
 ## 1.1.0-beta3
 - Fixed FormGroup, FormControl and FormArray initialization when the form was rebuild
 - Added a `control` field to the AbstractType which holds the form control 

@@ -1,14 +1,13 @@
-import {Type} from '@angular/core';
 import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
 import {FormBuilderComponent} from '../form-builder/form-builder.component';
-import {FormControl, FormGroup, FormArray} from '../abstraction';
+import {AbstractFormControl, Constructor} from '../types';
 
 export abstract class AbstractType<T> {
-  public abstract readonly component: Type<any>;
+  public abstract readonly component: Constructor;
 
   public builderInstance: FormBuilderComponent;
 
-  public control: FormGroup | FormArray | FormControl;
+  public control: AbstractFormControl;
 
   public get asyncValidators(): AsyncValidatorFn[] {
     return null;

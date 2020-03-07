@@ -7,7 +7,7 @@ export interface IAddressFormFieldOptions {
 }
 
 export class AddressFormField extends AbstractGroupType<IAddressFormFieldOptions & IGroupTypeOptions> {
-  readonly component: Type<any> = AddressFormFieldComponent;
+  readonly component: Constructor = AddressFormFieldComponent;
   readonly validators: ValidatorFn[];
 
   constructor(options?: IAddressFormFieldOptions) {

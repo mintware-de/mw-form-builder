@@ -15,7 +15,10 @@ export class ModelHandler {
     Object.keys(model).forEach((name) => {
       const field = model[name];
       if (field) {
-        const control = ModelHandler.handleField(field, builderInstance);
+        const control = ModelHandler.buildSingleField(field, builderInstance);
+        if (!control) {
+          return;
+        }
         control.setParent(group);
 
         if (field.disabled) {
@@ -32,22 +35,28 @@ export class ModelHandler {
     });
   }
 
-  private static handleField(field: AbstractType<any>, builderInstance: FormBuilderComponent): FormArray | FormGroup | FormControl {
+  public static buildSingleField(field: AbstractType<any>,
+                                 builderInstance: FormBuilderComponent
+  ): FormArray | FormGroup | FormControl | null {
     let component: FormArray | FormGroup | FormControl;
 
     if (field instanceof AbstractCollectionType) {
       component = new FormArray([], field.controlOptions);
-      ModelHandler.handleArray(field as AbstractCollectionType<any, any>, component as FormArray, builderInstance);
+      ModelHandler.handleArray(field, component, builderInstance);
     } else if (field instanceof AbstractGroupType) {
       component = new FormGroup({}, field.controlOptions);
-      ModelHandler.handleModel(field.options.model, component as FormGroup, builderInstance);
-    } else {
+      ModelHandler.handleModel(field.options.model, component, builderInstance);
+    } else if (field instanceof AbstractType) {
       component = new FormControl({value: null, disabled: field.disabled}, field.controlOptions);
     }
     return component;
   }
 
   private static handleArray(field: AbstractCollectionType<any, any>, array: FormArray, builderInstance: FormBuilderComponent): void {
-    array.push(ModelHandler.handleField(field.fieldInstance, builderInstance));
+    const control = ModelHandler.buildSingleField(field.fieldInstance, builderInstance);
+    if (!control) {
+      return;
+    }
+    array.push(control);
   }
 }

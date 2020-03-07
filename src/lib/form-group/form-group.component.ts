@@ -14,12 +14,13 @@ import {FormFieldComponent} from '../form-field/form-field.component';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {FormArray, FormControl, FormGroup} from '../abstraction';
 import {FormModel} from '../form-builder/form-builder.component';
+import {KeyValue} from '@angular/common';
 
 @Component({
   selector: 'mw-form-group',
   template: `
     <ng-content></ng-content>
-    <ng-container *ngFor="let field of (model | keyvalue:orderAsGiven)">
+    <ng-container *ngFor="let field of model | keyvalue:orderAsGiven">
       <mw-form-field *ngIf="renderTargets[field.key] == null"
                      [formGroup]="element"
                      [element]="element.get(field.key)"
@@ -36,6 +37,9 @@ export class FormGroupComponent
   implements OnChanges, AfterViewInit {
 
   @Input()
+  public element: FormGroup;
+
+  @Input()
   public isRootGroup: boolean = false;
 
   @Input()
@@ -48,7 +52,7 @@ export class FormGroupComponent
 
   private initializeTimeoutHandle: number = null;
 
-  public orderAsGiven = (): number => 1;
+  public orderAsGiven = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => +(a || b);
 
   public get groupPath(): string {
     return (this.path == null || this.path.trim() === '')
@@ -61,7 +65,7 @@ export class FormGroupComponent
       return null;
     }
 
-    let p = this.element;
+    let p: any = this.element;
     do {
       p = p.parent;
       if (p instanceof FormArray) {
@@ -124,7 +128,7 @@ export class FormGroupComponent
           window.clearTimeout(this.initializeTimeoutHandle);
         }
         this.initializeTimeoutHandle = window.setTimeout(() => {
-          (this.element as FormGroup).initHandler.setIsInitialized(true);
+          this.element.initHandler.setIsInitialized(true);
           this.cdr.detectChanges();
         }, 5);
       }
