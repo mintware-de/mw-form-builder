@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.1.0-beta4
+Code cleanup
+- Created `Constructor` types instead of using `new (...args: any[]) => any`
+- Using the `ModelHandler` in the `AbstractCollectionFormFieldComponent`
+- Created a `AbstractFormControl` type to reduce usage of any
+- Set the return Type of the onSubmit EventEmitter in the form explicitly
+- Using the `ModelHandler` in the `FormComponent.initializeCollectionField` method
+- Made `ModelHandler.buildSingleField` public
+- Removed a lot of `as` and using `instanceof` instead
+
+## 1.1.0-beta3
+- Fixed FormGroup, FormControl and FormArray initialization when the form was rebuild
+- Added a `control` field to the AbstractType which holds the form control 
+
+## 1.1.0-beta2
+Fixed wrong bool check in FormControl abstractions
+
+## 1.1.0-beta1
+Improved performance
+- Created own FormArray, FormGroup and FormControl which extends from the default Angular classes.
+- This abstractions blocks the `updateValueAndValidity` calls until the form rendering has finished
+- Checking in the `FormGroupComponent.ngAfterViewInit` hook, if the form was already rendered and block unnecessary rebuilding.
+
+Other changes:
+- Replaced `x.hasOwnProperty('y')` by `'y' in x` and replaced `if (x != null)` by `if (x)` to improve the readability.
+- Added `asyncValidators` and `updateOn` to the AbstractType and made `validators` non abstract
+
 ## 1.0.0
 Thanks to [@billbeeio](https://github.com/billbeeio) for many improvements ([PR#1](https://github.com/mintware-de/mw-form-builder/pull/1))
 

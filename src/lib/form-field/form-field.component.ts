@@ -15,6 +15,7 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
     super();
   }
 
+  // noinspection JSUnusedLocalSymbols
   public ngOnChanges(changes: SimpleChanges): void {
     this.render();
   }
@@ -26,16 +27,16 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
 
     this.viewRef.clear();
 
-    const factory = this.cfr.resolveComponentFactory(this.fieldType.component);
+    const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.fieldType.component);
     const component = this.viewRef.createComponent(factory);
 
     const isGroup = this.fieldType instanceof AbstractGroupType;
-    (component.instance as AbstractFormFieldComponent<any>).formGroup = isGroup ? this.element as FormGroup : this.formGroup;
-    (component.instance as AbstractFormFieldComponent<any>).element = this.element;
-    (component.instance as AbstractFormFieldComponent<any>).fieldType = this.fieldType;
-    (component.instance as AbstractFormFieldComponent<any>).slots = this.slots;
-    (component.instance as AbstractFormFieldComponent<any>).path = this.path;
-    (component.instance as AbstractFormFieldComponent<any>).index = this.index;
+    component.instance.formGroup = isGroup ? this.element as FormGroup : this.formGroup;
+    component.instance.element = this.element;
+    component.instance.fieldType = this.fieldType;
+    component.instance.slots = this.slots;
+    component.instance.path = this.path;
+    component.instance.index = this.index;
     component.changeDetectorRef.detectChanges();
   }
 }
