@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.0.0-beta1
+
+Features:
+- Introducing the new `AbstractLayoutType`. For details check the [example](./docs/layout-types.md).
+- Added `AbstractLayoutComponent`
+
+Changes:
+- Extracted FormGroup logic into the `AbstractFormGroupComponent`
+
+BREAKING CHANGE:
+- `model` property removed from the `mw-form-group` component. Use `fieldType` instead.
+- `AbstractGroupFormField` renamed to `AbstractFormGroupComponent`
+- `AbstractCollectionFormFieldComponent` renamed to `AbstractCollectionComponent`
+
 ## 1.1.0-beta4
 Code cleanup
 - Created `Constructor` types instead of using `new (...args: any[]) => any`

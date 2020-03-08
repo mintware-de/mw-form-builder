@@ -1,8 +1,9 @@
-import {FormBuilderComponent, FormModel} from './form-builder/form-builder.component';
+import {FormBuilderComponent} from './form-builder/form-builder.component';
 import {AbstractCollectionType} from './form-type/abstract-collection-type';
 import {AbstractGroupType} from './form-type/abstract-group-type';
-import {AbstractType} from './form-type/abstract-type';
+import {AbstractType, FormModel} from './form-type/abstract-type';
 import {FormArray, FormControl, FormGroup} from './abstraction';
+import {AbstractLayoutType} from './form-type/abstract-layout-type';
 
 export class ModelHandler {
   public static build(model: FormModel, builderInstance: FormBuilderComponent): FormGroup {
@@ -14,24 +15,28 @@ export class ModelHandler {
   private static handleModel(model: FormModel, group: FormGroup, builderInstance: FormBuilderComponent): void {
     Object.keys(model).forEach((name) => {
       const field = model[name];
-      if (field) {
-        const control = ModelHandler.buildSingleField(field, builderInstance);
-        if (!control) {
-          return;
-        }
-        control.setParent(group);
-
-        if (field.disabled) {
-          control.disable();
-        }
-
-        group.addControl(name, control);
-        if (field.builderInstance == null && builderInstance) {
-          field.builderInstance = builderInstance;
-        }
-
-        field.control = control;
+      if (!field) {
+        return;
       }
+
+      if (field instanceof AbstractLayoutType) {
+        this.handleModel(field.options.model, group, builderInstance);
+        return;
+      }
+
+      const control = ModelHandler.buildSingleField(field, builderInstance);
+      if (!control) {
+        return;
+      }
+      control.setParent(group);
+      if (field.disabled) {
+        control.disable();
+      }
+      group.addControl(name, control);
+      if (field.builderInstance == null && builderInstance) {
+        field.builderInstance = builderInstance;
+      }
+      field.control = control;
     });
   }
 
@@ -46,6 +51,8 @@ export class ModelHandler {
     } else if (field instanceof AbstractGroupType) {
       component = new FormGroup({}, field.controlOptions);
       ModelHandler.handleModel(field.options.model, component, builderInstance);
+    } else if (field instanceof AbstractLayoutType) {
+      // This type should not be handled
     } else if (field instanceof AbstractType) {
       component = new FormControl({value: null, disabled: field.disabled}, field.controlOptions);
     }

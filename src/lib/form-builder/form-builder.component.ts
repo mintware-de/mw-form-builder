@@ -10,17 +10,15 @@ import {
   SimpleChanges
 } from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
-import {AbstractType} from '../form-type/abstract-type';
 import {FormSlotComponent} from '../form-slot/form-slot.component';
 import {ModelHandler} from '../model-handler';
-import {AbstractGroupType} from '../form-type/abstract-group-type';
+import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {FormArray, FormControl, FormGroup} from '../abstraction';
 import {AbstractFormControl} from '../types';
-
-export interface FormModel {
-  [key: string]: AbstractType<any>;
-}
+import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
+import {AbstractLayoutType} from '../form-type/abstract-layout-type';
+import {FormModel} from '../form-type/abstract-type';
 
 @Component({
   selector: 'mw-form-builder',
@@ -29,7 +27,7 @@ export interface FormModel {
     <form [formGroup]="group" (ngSubmit)="submit()">
       <mw-form-group [element]="group"
                      [formGroup]="group"
-                     [model]="formModel"
+                     [fieldType]="fieldType"
                      [slots]="slots"
                      [isRootGroup]="true">
       </mw-form-group>
@@ -38,6 +36,8 @@ export interface FormModel {
   styles: []
 })
 export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges {
+
+  public fieldType: AbstractGroupType<IGroupTypeOptions>;
 
   @Input()
   public formModel: FormModel;
@@ -62,6 +62,15 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   public ngOnChanges(changes: SimpleChanges): void {
     if ('formModel' in changes && changes.formModel.currentValue) {
       this.rebuildForm();
+      this.fieldType = new FormGroupType({
+        model: this.formModel,
+      });
+
+      Object.assign(this.fieldType, {
+        builderInstance: this,
+        component: FormGroupComponent,
+        control: this.group,
+      });
     }
     if ('formData' in changes && changes.formData.currentValue) {
       if (!('formModel' in changes)) {
@@ -104,6 +113,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
       const control = group.get(name);
       if (formType instanceof AbstractGroupType && control instanceof FormGroup) {
         this.initializeCollectionFields(control, formType.options.model, childData);
+      } else if (formType instanceof AbstractLayoutType) {
+        this.initializeCollectionFields(group, formType.options.model, data);
       } else if (formType instanceof AbstractCollectionType && control instanceof FormArray) {
         this.initializeCollectionField(formType, control, childData);
       }

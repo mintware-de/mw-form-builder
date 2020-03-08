@@ -46,7 +46,7 @@ export class AddressFormField extends AbstractGroupType<IAddressFormFieldOptions
     <mw-form-group [path]="path"
                    [element]="element"
                    [formGroup]="element"
-                   [model]="fieldType.options.model"
+                   [fieldType]="fieldType"
                    [slots]="slots">
       <mw-form-slot fieldName="name"></mw-form-slot>
       <mw-form-slot fieldName="street"></mw-form-slot>
@@ -55,6 +55,6 @@ export class AddressFormField extends AbstractGroupType<IAddressFormFieldOptions
       <mw-form-slot fieldName="city"></mw-form-slot>
     </mw-form-group>`,
 })
-export class AddressFormFieldComponent extends AbstractGroupFormField<AddressFormField> {
+export class AddressFormFieldComponent extends AbstractFormGroupComponent<AddressFormField> {
 }
 ```

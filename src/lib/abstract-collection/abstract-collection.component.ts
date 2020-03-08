@@ -5,7 +5,7 @@ import {FormArray} from '../abstraction';
 import {Input} from '@angular/core';
 
 // noinspection JSUnusedGlobalSymbols
-export abstract class AbstractCollectionFormFieldComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
+export abstract class AbstractCollectionComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
 
   @Input()
   public element: FormArray;

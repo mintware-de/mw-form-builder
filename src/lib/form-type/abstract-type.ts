@@ -2,6 +2,10 @@ import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/fo
 import {FormBuilderComponent} from '../form-builder/form-builder.component';
 import {AbstractFormControl, Constructor} from '../types';
 
+export interface FormModel {
+  [key: string]: AbstractType<any>;
+}
+
 export abstract class AbstractType<T> {
   public abstract readonly component: Constructor;
 
