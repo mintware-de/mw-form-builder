@@ -8,18 +8,18 @@ import {Input} from '@angular/core';
 export abstract class AbstractCollectionComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
 
   @Input()
-  public element: FormArray;
+  public mwElement: FormArray;
 
   // noinspection JSUnusedGlobalSymbols
   public removeEntry(index: number): void {
-    this.element.removeAt(index);
+    this.mwElement.removeAt(index);
   }
 
   // noinspection JSUnusedGlobalSymbols
   public addEntry(): void {
     const newControl = ModelHandler.buildSingleField(
-      this.fieldType.fieldInstance,
-      this.fieldType.builderInstance
+      this.mwFieldType.fieldInstance,
+      this.mwFieldType.builderInstance
     );
 
     if (!newControl) {
@@ -27,6 +27,6 @@ export abstract class AbstractCollectionComponent extends AbstractFormFieldCompo
     }
 
     newControl.initHandler.setIsInitialized(true);
-    this.element.controls.push(newControl);
+    this.mwElement.controls.push(newControl);
   }
 }

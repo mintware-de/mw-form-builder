@@ -21,31 +21,31 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
   }
 
   public render(): void {
-    if (this.fieldType == null) {
+    if (this.mwFieldType == null) {
       return;
     }
 
     this.viewRef.clear();
 
-    const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.fieldType.component);
+    const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.mwFieldType.component);
     const component = this.viewRef.createComponent(factory);
 
-    const isGroup = this.fieldType instanceof AbstractGroupType;
+    const isGroup = this.mwFieldType instanceof AbstractGroupType;
     const changes = {
-      formGroup: new SimpleChange(null, isGroup ? this.element as FormGroup : this.formGroup, true),
-      element: new SimpleChange(null, this.element, true),
-      fieldType: new SimpleChange(null, this.fieldType, true),
-      slots: new SimpleChange(null, this.slots, true),
-      path: new SimpleChange(null, this.path, true),
-      index: new SimpleChange(null, this.index, true),
+      mwFormGroup: new SimpleChange(null, isGroup ? this.mwElement as FormGroup : this.mwFormGroup, true),
+      mwElement: new SimpleChange(null, this.mwElement, true),
+      mwFieldType: new SimpleChange(null, this.mwFieldType, true),
+      mwSlots: new SimpleChange(null, this.mwSlots, true),
+      mwPath: new SimpleChange(null, this.mwPath, true),
+      mwIndex: new SimpleChange(null, this.mwIndex, true),
     };
 
-    component.instance.formGroup = changes.formGroup.currentValue;
-    component.instance.element = changes.element.currentValue;
-    component.instance.fieldType = changes.fieldType.currentValue;
-    component.instance.slots = changes.slots.currentValue;
-    component.instance.path = changes.path.currentValue;
-    component.instance.index = changes.index.currentValue;
+    component.instance.mwFormGroup = changes.mwFormGroup.currentValue;
+    component.instance.mwElement = changes.mwElement.currentValue;
+    component.instance.mwFieldType = changes.mwFieldType.currentValue;
+    component.instance.mwSlots = changes.mwSlots.currentValue;
+    component.instance.mwPath = changes.mwPath.currentValue;
+    component.instance.mwIndex = changes.mwIndex.currentValue;
 
     if ('ngOnChanges' in component.instance) {
       (component.instance as OnChanges).ngOnChanges(changes);

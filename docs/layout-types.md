@@ -106,16 +106,16 @@ export class ColumnLayout extends RowColumnLayout {
   template: `
     <!-- Outer flex container. -->
     <div style="display: flex; align-items: start; align-content: center;justify-content: space-around;"
-         [ngStyle]="{'flex-direction': fieldType.options.direction}">
+         [ngStyle]="{'flex-direction': mwFieldType.options.direction}">
       <!-- Loop over the children -->
-      <div style="flex: 1" *ngFor="let kv of fieldType.options.model | keyvalue:orderAsGiven">
+      <div style="flex: 1" *ngFor="let kv of mwFieldType.options.model | keyvalue:orderAsGiven">
         <!-- And create a mw-form-field for each children -->
-        <mw-form-field [fieldType]="kv.value"
-                       [slots]="slots"
-                       [index]="indexFromParent"
-                       [formGroup]="formGroup"
-                       [path]="fieldPaths[kv.key]"
-                       [element]="elements[kv.key]">
+        <mw-form-field [mwFieldType]="kv.value"
+                       [mwSlots]="mwSlots"
+                       [mwIndex]="indexFromParent"
+                       [mwFormGroup]="mwFormGroup"
+                       [mwPath]="fieldPaths[kv.key]"
+                       [mwElement]="elements[kv.key]">
         </mw-form-field>
       </div>
     </div>

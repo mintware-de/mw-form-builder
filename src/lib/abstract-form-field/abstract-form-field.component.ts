@@ -6,20 +6,20 @@ import {FormSlotComponent} from '../form-slot/form-slot.component';
 export abstract class AbstractFormFieldComponent<T extends AbstractType<any>> {
 
   @Input()
-  public formGroup: FormGroup;
+  public mwFormGroup: FormGroup;
 
   @Input()
-  public element: FormControl | FormArray | FormGroup | AbstractControl;
+  public mwElement: FormControl | FormArray | FormGroup | AbstractControl;
 
   @Input()
-  public index: number;
+  public mwIndex: number;
 
   @Input()
-  public fieldType: T;
+  public mwFieldType: T;
 
   @Input()
-  public path: string;
+  public mwPath: string;
 
   @Input()
-  public slots: QueryList<FormSlotComponent>;
+  public mwSlots: QueryList<FormSlotComponent>;
 }

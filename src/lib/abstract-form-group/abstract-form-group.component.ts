@@ -29,37 +29,35 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   public elements: { [key: string]: AbstractFormControl } = {};
 
   @Input()
-  public element: FormGroup;
+  public mwElement: FormGroup;
 
   @Input()
-  public isRootGroup: boolean = false;
+  public mwIsRootGroup: boolean = false;
 
   @ContentChildren(FormSlotComponent, {descendants: true})
   public mySlots: QueryList<FormSlotComponent>;
 
   public renderTargets: { [key: string]: FormSlotComponent } = {};
 
-  private initializeTimeoutHandle: number = null;
-
-  constructor(private readonly cfr: ComponentFactoryResolver,
-              private readonly cdr: ChangeDetectorRef,
+  constructor(protected readonly cfr: ComponentFactoryResolver,
+              protected readonly cdr: ChangeDetectorRef,
   ) {
     super();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    const path = 'path' in changes ? changes.path.currentValue : this.path;
-    if ('path' in changes) {
-      this.groupPath = (path == null || path.trim() === '')
+    const mwPath = 'mwPath' in changes ? changes.mwPath.currentValue : this.mwPath;
+    if ('mwPath' in changes) {
+      this.groupPath = (mwPath == null || mwPath.trim() === '')
         ? ''
-        : path;
+        : mwPath;
     }
 
-    const fieldType = 'fieldType' in changes ? changes.fieldType.currentValue : this.fieldType;
-    if ('path' in changes || 'fieldType' in changes) {
-      this.fieldPaths = Object.keys(fieldType.options.model).reduce((all, fieldName) => {
-        if (fieldType.options.model[fieldName] instanceof AbstractLayoutType) {
-          all[fieldName] = path;
+    const mwFieldType = 'mwFieldType' in changes ? changes.mwFieldType.currentValue : this.mwFieldType;
+    if ('mwPath' in changes || 'mwFieldType' in changes) {
+      this.fieldPaths = Object.keys(mwFieldType.options.model).reduce((all, fieldName) => {
+        if (mwFieldType.options.model[fieldName] instanceof AbstractLayoutType) {
+          all[fieldName] = mwPath;
         } else {
           all[fieldName] = (this.groupPath !== '' ? this.groupPath + '.' : '') + fieldName;
         }
@@ -67,33 +65,33 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
       }, {});
     }
 
-    if ('index' in changes) {
-      const index = changes.index.currentValue;
+    if ('mwIndex' in changes) {
+      const mwIndex = changes.mwIndex.currentValue;
 
       this.indexFromParent = null;
-      if (index != null) {
-        let p: any = this.element;
+      if (mwIndex != null) {
+        let p: any = this.mwElement;
         do {
           p = p.parent;
           if (p instanceof FormArray) {
-            this.indexFromParent = this.index;
+            this.indexFromParent = this.mwIndex;
             break;
           }
         } while (p && p.parent && !(parent instanceof FormControl));
       }
     }
 
-    this.elements = Object.keys(fieldType.options.model).reduce((all, fieldName) => {
-      if (fieldType.options.model[fieldName] instanceof AbstractLayoutType) {
-        all[fieldName] = this.element;
+    this.elements = Object.keys(mwFieldType.options.model).reduce((all, fieldName) => {
+      if (mwFieldType.options.model[fieldName] instanceof AbstractLayoutType) {
+        all[fieldName] = this.mwElement;
       } else {
-        all[fieldName] = this.element.get(fieldName);
+        all[fieldName] = this.mwElement.get(fieldName);
       }
       return all;
     }, {});
 
     let wasRendered = false;
-    if ('slots' in changes && changes.slots.currentValue) {
+    if ('mwSlots' in changes && changes.mwSlots.currentValue) {
       this.renderElementsInSlots();
       wasRendered = true;
     }
@@ -110,7 +108,7 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   }
 
   private renderElementsInSlots(): void {
-    if (this.slots || this.mySlots) {
+    if (this.mwSlots || this.mySlots) {
       this.createRenderTargets();
 
       Object.keys(this.renderTargets).map((name) => {
@@ -122,36 +120,29 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
         const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
         const target = this.renderTargets[name].viewRef.createComponent(factory);
 
-        target.instance.formGroup = this.formGroup;
-        target.instance.element = this.formGroup.get(name);
-        target.instance.slots = this.slots;
-        target.instance.path = this.fieldPaths[name];
-        target.instance.fieldType = this.fieldType.options.model[name];
-        target.instance.index = this.indexFromParent;
+        target.instance.mwFormGroup = this.mwFormGroup;
+        target.instance.mwElement = this.elements[name];
+        target.instance.mwSlots = this.mwSlots;
+        target.instance.mwPath = this.fieldPaths[name];
+        target.instance.mwFieldType = this.mwFieldType.options.model[name];
+        target.instance.mwIndex = this.indexFromParent;
 
         target.instance.render();
       });
 
-      if (this.isRootGroup) {
-        if (this.initializeTimeoutHandle) {
-          window.clearTimeout(this.initializeTimeoutHandle);
-        }
-        this.initializeTimeoutHandle = window.setTimeout(() => {
-          this.element.initHandler.setIsInitialized(true);
-          this.cdr.detectChanges();
-        }, 5);
-      }
+      this.mwElement.initHandler.setIsInitialized(true);
+      this.cdr.detectChanges();
     }
   }
 
   private createRenderTargets(): void {
     const groupPath = this.groupPath;
-    if (this.slots) {
-      this.slots.toArray().forEach((slot) => {
-        if (slot.fieldName.substr(0, groupPath.length) !== groupPath) {
+    if (this.mwSlots) {
+      this.mwSlots.toArray().forEach((slot) => {
+        if (slot.mwFieldName.substr(0, groupPath.length) !== groupPath) {
           return;
         }
-        let name = slot.fieldName.substr(groupPath.length, slot.fieldName.length - groupPath.length);
+        let name = slot.mwFieldName.substr(groupPath.length, slot.mwFieldName.length - groupPath.length);
         if (name.startsWith('.')) {
           name = name.substr(1);
         }
@@ -163,7 +154,7 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
 
     if (this.mySlots) {
       this.mySlots.toArray().forEach((slot) => {
-        this.renderTargets[slot.fieldName] = slot;
+        this.renderTargets[slot.mwFieldName] = slot;
       });
     }
   }

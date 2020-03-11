@@ -1,5 +1,35 @@
 # Changelog
 
+## 2.0.0-beta2
+
+Changes:
+- `AbstractFormGroupComponent`
+  - Made `cfr` and `cdr` protected.
+- `CollectionFormFieldComponent`
+  - Made `cdr` protected.
+- `InitHandler`
+  - Made `instance` protected.
+
+
+BREAKING CHANGE:
+Added parameter prefix to prevent name collision. 
+I know that means a lot of work for you but it's necessary to reduce future bugs.
+
+- AbstractFormFieldComponent
+  - `formGroup` -> `mwFormGroup`
+  - `element` -> `mwElement`
+  - `index` -> `mwIndex`
+  - `fieldType` -> `mwFieldType`
+  - `path` -> `mwPath`
+  - `slots` -> `mwSlots`
+
+- AbstractFormGroupComponent
+  - `element` -> `mwElement`
+  - `isRootGroup` -> `mwIsRootGroup`
+  
+- FormSlotComponent
+  - `fieldName` -> `mwFieldName`
+
 ## 2.0.0-beta1
 
 Features:

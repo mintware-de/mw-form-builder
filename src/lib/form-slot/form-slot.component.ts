@@ -7,7 +7,7 @@ import {Component, Input, ViewContainerRef} from '@angular/core';
 export class FormSlotComponent {
 
   @Input()
-  public fieldName: string;
+  public mwFieldName: string;
 
   constructor(public readonly viewRef: ViewContainerRef,
   ) {

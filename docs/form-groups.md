@@ -43,16 +43,16 @@ export class AddressFormField extends AbstractGroupType<IAddressFormFieldOptions
 @Component({
   selector: 'app-address-form-field',
   template: `
-    <mw-form-group [path]="path"
-                   [element]="element"
-                   [formGroup]="element"
-                   [fieldType]="fieldType"
-                   [slots]="slots">
-      <mw-form-slot fieldName="name"></mw-form-slot>
-      <mw-form-slot fieldName="street"></mw-form-slot>
-      <mw-form-slot fieldName="houseNumber"></mw-form-slot>
-      <mw-form-slot fieldName="zipCode"></mw-form-slot>
-      <mw-form-slot fieldName="city"></mw-form-slot>
+    <mw-form-group [mwPath]="mwPath"
+                   [mwElement]="mwElement"
+                   [mwFormGroup]="mwElement"
+                   [mwFieldType]="mwFieldType"
+                   [mwSlots]="mwSlots">
+      <mw-form-slot mwFieldName="name"></mw-form-slot>
+      <mw-form-slot mwFieldName="street"></mw-form-slot>
+      <mw-form-slot mwFieldName="houseNumber"></mw-form-slot>
+      <mw-form-slot mwFieldName="zipCode"></mw-form-slot>
+      <mw-form-slot mwFieldName="city"></mw-form-slot>
     </mw-form-group>`,
 })
 export class AddressFormFieldComponent extends AbstractFormGroupComponent<AddressFormField> {

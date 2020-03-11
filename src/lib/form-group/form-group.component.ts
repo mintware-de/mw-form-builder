@@ -11,14 +11,14 @@ export class FormGroupType extends AbstractGroupType<IGroupTypeOptions> {
   selector: 'mw-form-group',
   template: `
     <ng-content></ng-content>
-    <ng-container *ngFor="let field of fieldType.options.model | keyvalue:orderAsGiven">
+    <ng-container *ngFor="let field of mwFieldType.options.model | keyvalue:orderAsGiven">
       <mw-form-field *ngIf="renderTargets[field.key] == null"
-                     [formGroup]="element"
-                     [element]="elements[field.key]"
-                     [fieldType]="field.value"
-                     [path]="fieldPaths[field.key]"
-                     [index]="indexFromParent"
-                     [slots]="slots">
+                     [mwFormGroup]="mwElement"
+                     [mwElement]="elements[field.key]"
+                     [mwFieldType]="field.value"
+                     [mwPath]="fieldPaths[field.key]"
+                     [mwIndex]="indexFromParent"
+                     [mwSlots]="mwSlots">
       </mw-form-field>
     </ng-container>
   `,
