@@ -115,19 +115,22 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
         if (!(name in this.renderTargets)) {
           return;
         }
-        this.renderTargets[name].viewRef.clear();
 
-        const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
-        const target = this.renderTargets[name].viewRef.createComponent(factory);
+        this.renderTargets[name].setup((viewRef) => {
+          viewRef.clear();
 
-        target.instance.mwFormGroup = this.mwFormGroup;
-        target.instance.mwElement = this.elements[name];
-        target.instance.mwSlots = this.mwSlots;
-        target.instance.mwPath = this.fieldPaths[name];
-        target.instance.mwFieldType = this.mwFieldType.options.model[name];
-        target.instance.mwIndex = this.indexFromParent;
+          const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
+          const target = viewRef.createComponent(factory);
 
-        target.instance.render();
+          target.instance.mwFormGroup = this.mwFormGroup;
+          target.instance.mwElement = this.elements[name];
+          target.instance.mwSlots = this.mwSlots;
+          target.instance.mwPath = this.fieldPaths[name];
+          target.instance.mwFieldType = this.mwFieldType.options.model[name];
+          target.instance.mwIndex = this.indexFromParent;
+
+          target.instance.render();
+        });
       });
 
       this.mwElement.initHandler.setIsInitialized(true);

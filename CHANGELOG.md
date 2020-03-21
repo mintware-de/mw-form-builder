@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta3
+
+Bugfix:
+- Nested elements will be rendered correctly
+
 ## 2.0.0-beta2
 
 Changes:

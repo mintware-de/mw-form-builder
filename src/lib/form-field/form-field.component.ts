@@ -1,16 +1,18 @@
-import {Component, ComponentFactoryResolver, OnChanges, SimpleChange, SimpleChanges, ViewContainerRef} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnChanges, SimpleChange, SimpleChanges, ViewChild, ViewContainerRef} from '@angular/core';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'mw-form-field',
-  template: '',
+  template: '<ng-container #ref></ng-container>',
 })
 export class FormFieldComponent extends AbstractFormFieldComponent<any> implements OnChanges {
 
-  constructor(public readonly viewRef: ViewContainerRef,
-              public readonly cfr: ComponentFactoryResolver,
+  @ViewChild('ref', {read: ViewContainerRef})
+  public readonly viewRef: ViewContainerRef;
+
+  constructor(public readonly cfr: ComponentFactoryResolver,
   ) {
     super();
   }
@@ -21,7 +23,7 @@ export class FormFieldComponent extends AbstractFormFieldComponent<any> implemen
   }
 
   public render(): void {
-    if (this.mwFieldType == null) {
+    if (this.mwFieldType == null || this.viewRef == null) {
       return;
     }
 
