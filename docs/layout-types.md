@@ -22,7 +22,7 @@ and the address fields on the right.
 | Last name  | Zip Code / City |
 |            | State           |
 
-Instead of using form slots (`<mw-form-slot fieldName="..."></mw-form-slot>`) you can create 
+Instead of using form slots (`<ng-container mwFormSlot fieldName="..."></ng-container>`) you can create 
 a row and column layout type and use it in the form model.
 
 Simplified pseudo example of the `FormModel` 
@@ -104,24 +104,31 @@ export class ColumnLayout extends RowColumnLayout {
 @Component({
   selector: 'app-row-column-layout',
   template: `
-    <!-- Outer flex container. -->
-    <div style="display: flex; align-items: start; align-content: center;justify-content: space-around;"
-         [ngStyle]="{'flex-direction': mwFieldType.options.direction}">
-      <!-- Loop over the children -->
-      <div style="flex: 1" *ngFor="let kv of mwFieldType.options.model | keyvalue:orderAsGiven">
-        <!-- And create a mw-form-field for each children -->
-        <mw-form-field [mwFieldType]="kv.value"
-                       [mwSlots]="mwSlots"
-                       [mwIndex]="indexFromParent"
-                       [mwFormGroup]="mwFormGroup"
-                       [mwPath]="fieldPaths[kv.key]"
-                       [mwElement]="elements[kv.key]">
-        </mw-form-field>
-      </div>
-    </div>
-  `
+  <!-- And create a mwFormField of each children -->
+  <ng-container mwFormField
+                [mwFieldType]="kv.value"
+                [mwSlots]="mwSlots"
+                [mwIndex]="indexFromParent"
+                [mwFormGroup]="mwFormGroup"
+                [mwPath]="fieldPaths[kv.key]"
+                [mwElement]="elements[kv.key]">
+  </ng-container>
+`
 })
 export class RowColumnLayoutComponent extends AbstractLayoutComponent<RowColumnLayout> {
+  @HostBinding('style.display')
+  private display: string = 'flex';
+
+  @HostBinding('style.align-items')
+  private alignItems: string = 'start';
+
+  @HostBinding('style.justify-content')
+  private justifyContent: string = 'space-around';
+
+  @HostBinding('style.flex-direction')
+  private get flexDirection(): string {
+    return this.mwFieldType.options.direction;
+  }
 }
 ```
 

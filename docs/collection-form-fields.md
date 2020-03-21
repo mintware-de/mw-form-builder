@@ -24,7 +24,7 @@ export class CollectionFormType<TConfig> extends AbstractCollectionType<TConfig,
 ```
 
 In the Angular Component you've to extend the AbstractCollectionFormFieldComponent and use the 
-`<mw-form-field>` component in the template
+`mwFormField` directive in the template
 
 ```typescript
 @Component({
@@ -33,12 +33,12 @@ In the Angular Component you've to extend the AbstractCollectionFormFieldCompone
     <div>
       <strong>{{mwFieldType.options.label}}:</strong><br>
       <div *ngFor="let child of mwElement.controls; let i=index">
-        <mw-form-field [mwFormGroup]="mwFormGroup"
-                       [mwElement]="child"
-                       [mwFieldType]="mwFieldType.fieldInstance"
-                       [mwSlots]="mwSlots"
-                       [mwPath]="mwPath + '_'+ i"
-                       [mwIndex]="i"></mw-form-field>
+        <ng-container mwFormField [mwFormGroup]="mwFormGroup"
+                                  [mwElement]="child"
+                                  [mwFieldType]="mwFieldType.fieldInstance"
+                                  [mwSlots]="mwSlots"
+                                  [mwPath]="mwPath + '_'+ i"
+                                  [mwIndex]="i"></ng-container>
         <button (click)="removeEntry(i)">-</button>
       </div>
       <button type="button" (click)="addEntry()">+</button>

@@ -6,16 +6,17 @@ import {
   AfterContentInit,
   ChangeDetectorRef,
   ComponentFactoryResolver,
-  ContentChildren, Injectable,
+  Injectable,
   Input,
   OnChanges,
   QueryList,
-  SimpleChanges
+  SimpleChanges,
+  ViewChildren,
 } from '@angular/core';
 import {FormArray, FormControl, FormGroup} from '../abstraction';
 import {AbstractFormControl} from '../types';
-import {FormSlotComponent} from '../form-slot/form-slot.component';
-import {FormFieldComponent} from '../form-field/form-field.component';
+import {FormSlotDirective} from '../form-slot/form-slot.directive';
+import {FieldInstanceHelper} from '../field-instance-helper';
 
 // noinspection JSUnusedGlobalSymbols
 @Injectable()
@@ -31,13 +32,10 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   @Input()
   public mwElement: FormGroup;
 
-  @Input()
-  public mwIsRootGroup: boolean = false;
+  @ViewChildren(FormSlotDirective)
+  public mySlots: QueryList<FormSlotDirective>;
 
-  @ContentChildren(FormSlotComponent, {descendants: true})
-  public mySlots: QueryList<FormSlotComponent>;
-
-  public renderTargets: { [key: string]: FormSlotComponent } = {};
+  public renderTargets: { [key: string]: FormSlotDirective } = {};
 
   constructor(protected readonly cfr: ComponentFactoryResolver,
               protected readonly cdr: ChangeDetectorRef,
@@ -108,34 +106,37 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   }
 
   private renderElementsInSlots(): void {
-    if (this.mwSlots || this.mySlots) {
-      this.createRenderTargets();
+    if (!(this.mwSlots || this.mySlots)) {
+      return;
+    }
+    this.createRenderTargets();
 
-      Object.keys(this.renderTargets).map((name) => {
-        if (!(name in this.renderTargets)) {
-          return;
-        }
+    Object.keys(this.renderTargets).forEach((name) => {
+      if (!(name in this.renderTargets)) {
+        return;
+      }
 
-        this.renderTargets[name].setup((viewRef) => {
-          viewRef.clear();
+      this.renderTargets[name].setup((viewRef) => {
+        viewRef.clear();
 
-          const factory = this.cfr.resolveComponentFactory(FormFieldComponent);
-          const target = viewRef.createComponent(factory);
+        const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.mwFieldType.options.model[name].component);
 
-          target.instance.mwFormGroup = this.mwFormGroup;
-          target.instance.mwElement = this.elements[name];
-          target.instance.mwSlots = this.mwSlots;
-          target.instance.mwPath = this.fieldPaths[name];
-          target.instance.mwFieldType = this.mwFieldType.options.model[name];
-          target.instance.mwIndex = this.indexFromParent;
+        const component = viewRef.createComponent(factory);
 
-          target.instance.render();
+        const isGroup = this.mwFieldType.options.model[name] instanceof AbstractGroupType;
+        FieldInstanceHelper.setupFieldInstance(component.instance, {
+          mwFormGroup: isGroup ? this.elements[name] : this.mwFormGroup,
+          mwElement: this.elements[name],
+          mwFieldType: this.mwFieldType.options.model[name],
+          mwSlots: this.mwSlots,
+          mwPath: this.fieldPaths[name],
+          mwIndex: this.indexFromParent,
         });
       });
+    });
 
-      this.mwElement.initHandler.setIsInitialized(true);
-      this.cdr.detectChanges();
-    }
+    this.mwElement.initHandler.setIsInitialized(true);
+    this.cdr.detectChanges();
   }
 
   private createRenderTargets(): void {

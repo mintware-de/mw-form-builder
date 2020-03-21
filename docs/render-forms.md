@@ -48,12 +48,12 @@ You can also render the fields where you want:
 
     <div style="background-color: red">
         Field 1
-        <mw-form-slot mwFieldName="firstName"></mw-form-slot>
+        <ng-container mwFormSlot mwFieldName="firstName"></ng-container>
     </div>
 
     <div style="background-color: yellow">
         Field 2
-        <mw-form-slot mwFieldName="surname"></mw-form-slot>
+        <ng-container mwFormSlot mwFieldName="surname"></ng-container>
     </div>
 
 

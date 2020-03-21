@@ -1,17 +1,19 @@
-import {AfterViewInit, Component, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {AfterViewInit, Directive, Input, ViewContainerRef} from '@angular/core';
 
-@Component({
-  selector: 'mw-form-slot',
-  template: '<ng-container #ref></ng-container>',
+@Directive({
+  selector: '[mwFormSlot]',
+  exportAs: 'mwFormSlot',
 })
-export class FormSlotComponent implements AfterViewInit {
-  @ViewChild('ref', {read: ViewContainerRef})
-  public readonly viewRef: ViewContainerRef;
+export class FormSlotDirective implements AfterViewInit {
 
   @Input()
   public mwFieldName: string;
 
   private renderFn: (viewRef: ViewContainerRef) => void;
+
+  constructor(public viewRef: ViewContainerRef,
+  ) {
+  }
 
   public ngAfterViewInit(): void {
     if (this.renderFn) {

@@ -1,16 +1,6 @@
-import {
-  Component,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges
-} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
-import {FormSlotComponent} from '../form-slot/form-slot.component';
+import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {ModelHandler} from '../model-handler';
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
@@ -28,8 +18,7 @@ import {FormModel} from '../form-type/abstract-type';
       <mw-form-group [mwElement]="group"
                      [mwFormGroup]="group"
                      [mwFieldType]="fieldType"
-                     [mwSlots]="mwSlots"
-                     [mwIsRootGroup]="true">
+                     [mwSlots]="mwSlots">
       </mw-form-group>
     </form>
   `,
@@ -48,8 +37,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   @Output()
   public mwFormSubmit: EventEmitter<T> = new EventEmitter<T>();
 
-  @ContentChildren(FormSlotComponent, {descendants: true})
-  public mwSlots: QueryList<FormSlotComponent>;
+  @ContentChildren(FormSlotDirective, {descendants: true})
+  public mwSlots: QueryList<FormSlotDirective>;
 
   public group: FormGroup;
 

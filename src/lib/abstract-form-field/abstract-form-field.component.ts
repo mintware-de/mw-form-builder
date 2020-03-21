@@ -1,7 +1,7 @@
 import {Input, QueryList} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {AbstractType} from '../form-type/abstract-type';
-import {FormSlotComponent} from '../form-slot/form-slot.component';
+import {FormSlotDirective} from '../form-slot/form-slot.directive';
 
 export abstract class AbstractFormFieldComponent<T extends AbstractType<any>> {
 
@@ -21,5 +21,5 @@ export abstract class AbstractFormFieldComponent<T extends AbstractType<any>> {
   public mwPath: string;
 
   @Input()
-  public mwSlots: QueryList<FormSlotComponent>;
+  public mwSlots: QueryList<FormSlotDirective>;
 }

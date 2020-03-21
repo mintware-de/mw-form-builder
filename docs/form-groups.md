@@ -43,17 +43,13 @@ export class AddressFormField extends AbstractGroupType<IAddressFormFieldOptions
 @Component({
   selector: 'app-address-form-field',
   template: `
-    <mw-form-group [mwPath]="mwPath"
-                   [mwElement]="mwElement"
-                   [mwFormGroup]="mwElement"
-                   [mwFieldType]="mwFieldType"
-                   [mwSlots]="mwSlots">
-      <mw-form-slot mwFieldName="name"></mw-form-slot>
-      <mw-form-slot mwFieldName="street"></mw-form-slot>
-      <mw-form-slot mwFieldName="houseNumber"></mw-form-slot>
-      <mw-form-slot mwFieldName="zipCode"></mw-form-slot>
-      <mw-form-slot mwFieldName="city"></mw-form-slot>
-    </mw-form-group>`,
+    <ng-container [formGroup]="mwElement">
+      <ng-container mwFormSlot mwFieldName="name"></ng-container>
+      <ng-container mwFormSlot mwFieldName="street"></ng-container>
+      <ng-container mwFormSlot mwFieldName="houseNumber"></ng-container>
+      <ng-container mwFormSlot mwFieldName="zipCode"></ng-container>
+      <ng-container mwFormSlot mwFieldName="city"></ng-container>
+    </ng-container>`,
 })
 export class AddressFormFieldComponent extends AbstractFormGroupComponent<AddressFormField> {
 }

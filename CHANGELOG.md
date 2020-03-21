@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.0.0-beta4
+
+Fixed component rendering:
+- `mw-form-slot` and `mw-form-field` isn't rendered anymore in the dom
+
+BREAKING CHANGE:
+- `mw-form-slot` Component is now a **Directive**!
+  - To fix your templates replace
+    - `<mw-form-slot` with `<div><ng-container mwFormSlot`
+    - `mw-form-slot>` with `ng-container></div>`
+
+- `mw-form-field` Component is now a **Directive**!
+  - To fix your templates replace
+    - `<mw-form-field` with `<div><ng-container mwFormField`
+    - `mw-form-field>` with `ng-container></div>`
+
+
+- AbstractFormGroupComponent
+  - `mwIsRootGroup` -> removed
+  
 ## 2.0.0-beta3
 
 Bugfix:

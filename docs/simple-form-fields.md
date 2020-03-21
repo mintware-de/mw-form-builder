@@ -63,27 +63,25 @@ The component should extend the `AbstractFormFieldComponent<AbstractType>` compo
 @Component({
   selector: 'app-text-form-field',
   template: `
-    <ng-container>
-      <label [for]="mwPath" *ngIf="mwFieldType.options.label != ''">{{mwFieldType.options.label}}: </label>
-      <input [formControl]="mwElement" [id]="mwPath">
+  <label [for]="mwPath" *ngIf="mwFieldType.options.label != ''">{{mwFieldType.options.label}}: </label>
+  <input [formControl]="mwElement" [id]="mwPath">
 
-      <div *ngIf="mwElement.invalid && (mwElement.dirty || mwElement.touched)"
-           class="alert alert-danger">
-        <div *ngIf="mwElement.errors.required">
-          {{mwFieldType.options.label}} is required.
-        </div>
-        <div *ngIf="mwElement.errors.minlength && mwFieldType.options.minLength != mwFieldType.options.maxLength">
-          {{mwFieldType.options.label}} must be at least {{mwFieldType.options.minLength}} characters long.
-        </div>
-        <div *ngIf="mwElement.errors.maxlength && mwFieldType.options.minLength != mwFieldType.options.maxLength">
-          {{mwFieldType.options.label}} must be max {{mwFieldType.options.maxLength}} characters long.
-        </div>
-        <div *ngIf="(mwElement.errors.minlength || mwElement.errors.maxlength) && mwFieldType.options.minLength == mwFieldType.options.maxLength">
-          {{mwFieldType.options.label}} must be exact {{mwFieldType.options.minLength}} characters long.
-        </div>
-      </div>
-    </ng-container>
-  `
+  <div *ngIf="mwElement.invalid && (mwElement.dirty || mwElement.touched)"
+       class="alert alert-danger">
+    <div *ngIf="mwElement.errors.required">
+      {{mwFieldType.options.label}} is required.
+    </div>
+    <div *ngIf="mwElement.errors.minlength && mwFieldType.options.minLength != mwFieldType.options.maxLength">
+      {{mwFieldType.options.label}} must be at least {{mwFieldType.options.minLength}} characters long.
+    </div>
+    <div *ngIf="mwElement.errors.maxlength && mwFieldType.options.minLength != mwFieldType.options.maxLength">
+      {{mwFieldType.options.label}} must be max {{mwFieldType.options.maxLength}} characters long.
+    </div>
+    <div *ngIf="(mwElement.errors.minlength || mwElement.errors.maxlength) && mwFieldType.options.minLength == mwFieldType.options.maxLength">
+      {{mwFieldType.options.label}} must be exact {{mwFieldType.options.minLength}} characters long.
+    </div>
+  </div>
+`
 })
 export class TextFormFieldComponent extends AbstractFormFieldComponent<TextFormType> {
 }

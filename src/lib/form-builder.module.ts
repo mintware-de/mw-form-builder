@@ -1,20 +1,19 @@
 import {NgModule} from '@angular/core';
 import {FormBuilderComponent} from './form-builder/form-builder.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {FormFieldComponent} from './form-field/form-field.component';
+import {FormFieldDirective} from './form-field/form-field.directive';
 import {CommonModule} from '@angular/common';
-import {FormSlotComponent} from './form-slot/form-slot.component';
+import {FormSlotDirective} from './form-slot/form-slot.directive';
 import {FormGroupComponent} from './form-group/form-group.component';
 
 @NgModule({
   declarations: [
     FormBuilderComponent,
     FormGroupComponent,
-    FormFieldComponent,
-    FormSlotComponent,
+    FormFieldDirective,
+    FormSlotDirective,
   ],
   entryComponents: [
-    FormFieldComponent,
     FormGroupComponent,
   ],
   imports: [
@@ -24,8 +23,8 @@ import {FormGroupComponent} from './form-group/form-group.component';
   exports: [
     FormBuilderComponent,
     FormGroupComponent,
-    FormFieldComponent,
-    FormSlotComponent,
+    FormFieldDirective,
+    FormSlotDirective,
   ],
 })
 export class FormBuilderModule {
