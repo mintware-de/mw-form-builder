@@ -147,11 +147,7 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   }
 
   public submit(): T {
-    Object.keys(this.group.controls).forEach((field) => {
-      const control = this.group.get(field);
-      control.markAsDirty();
-      control.updateValueAndValidity();
-    });
+    this.validateAllFormFields(this.group);
 
     if (!this.group.valid) {
       return;
@@ -160,6 +156,18 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     this.mwFormSubmit.emit(this.group.value);
 
     return this.group.value;
+  }
+
+  private validateAllFormFields(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(field => {
+      const control = formGroup.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({onlySelf: true});
+        control.updateValueAndValidity({onlySelf: true});
+      } else if (control instanceof FormGroup) {
+        this.validateAllFormFields(control);
+      }
+    });
   }
 
   public getErrors(group?: FormGroup | FormArray): { [key: string]: ValidationErrors } | ValidationErrors[] | null {

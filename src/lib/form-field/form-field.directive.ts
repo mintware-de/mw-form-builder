@@ -45,6 +45,7 @@ export class FormFieldDirective extends AbstractFormFieldComponent<any> implemen
     if (host instanceof HTMLElement && !host.contains(component.location.nativeElement)) {
       host.appendChild(component.location.nativeElement);
     }
+
     component.changeDetectorRef.detectChanges();
   }
 }
