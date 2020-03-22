@@ -9,7 +9,7 @@ export class FormSlotDirective implements AfterViewInit {
   @Input()
   public mwFieldName: string;
 
-  private renderFn: (viewRef: ViewContainerRef,  elRef: ElementRef) => void;
+  private renderFn: (viewRef: ViewContainerRef, elRef: ElementRef) => void;
 
   constructor(public viewRef: ViewContainerRef,
               public elRef: ElementRef,
@@ -22,7 +22,7 @@ export class FormSlotDirective implements AfterViewInit {
     }
   }
 
-  public setup(renderFunction: (viewRef: ViewContainerRef,  elRef: ElementRef) => void): void {
+  public setup(renderFunction: (viewRef: ViewContainerRef, elRef: ElementRef) => void): void {
     this.renderFn = renderFunction;
     if (this.viewRef) {
       this.ngAfterViewInit();

@@ -137,6 +137,8 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
         if (host instanceof HTMLElement && !host.contains(component.location.nativeElement)) {
           host.appendChild(component.location.nativeElement);
         }
+
+        component.changeDetectorRef.detectChanges();
       });
     });
 
