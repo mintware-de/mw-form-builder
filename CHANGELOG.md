@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta5
+
+Fix
+- The content of `mwFormSlot` and `mwFormField` on non `ng-content` tags will be projected inside the host element
+
 ## 2.0.0-beta4
 
 Fixed component rendering:

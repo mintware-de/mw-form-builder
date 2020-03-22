@@ -116,7 +116,7 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
         return;
       }
 
-      this.renderTargets[name].setup((viewRef) => {
+      this.renderTargets[name].setup((viewRef, elRef) => {
         viewRef.clear();
 
         const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.mwFieldType.options.model[name].component);
@@ -132,6 +132,11 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
           mwPath: this.fieldPaths[name],
           mwIndex: this.indexFromParent,
         });
+
+        const host = elRef.nativeElement;
+        if (host instanceof HTMLElement && !host.contains(component.location.nativeElement)) {
+          host.appendChild(component.location.nativeElement);
+        }
       });
     });
 

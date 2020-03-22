@@ -1,4 +1,4 @@
-import {ComponentFactoryResolver, Directive, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
+import {ComponentFactoryResolver, Directive, ElementRef, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType} from '../form-type/abstract-group-type';
 import {FormGroup} from '@angular/forms';
@@ -11,6 +11,7 @@ export class FormFieldDirective extends AbstractFormFieldComponent<any> implemen
 
   constructor(public readonly viewRef: ViewContainerRef,
               public readonly cfr: ComponentFactoryResolver,
+              protected readonly elRef: ElementRef,
   ) {
     super();
   }
@@ -40,6 +41,10 @@ export class FormFieldDirective extends AbstractFormFieldComponent<any> implemen
       mwIndex: this.mwIndex,
     });
 
+    const host: any = this.elRef.nativeElement;
+    if (host instanceof HTMLElement && !host.contains(component.location.nativeElement)) {
+      host.appendChild(component.location.nativeElement);
+    }
     component.changeDetectorRef.detectChanges();
   }
 }
