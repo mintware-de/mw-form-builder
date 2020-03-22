@@ -15,7 +15,7 @@ Everything else is similar to simple form fields
 
 ```typescript
 export class CollectionFormType<TConfig> extends AbstractCollectionType<TConfig, ICollectionFormTypeConfiguration<TConfig>> {
-  public readonly component: any = CollectionFormFieldComponent;
+  public readonly component: Constructor = CollectionFormFieldComponent;
 
   public get validators(): ValidatorFn[] {
     return [];
@@ -24,27 +24,27 @@ export class CollectionFormType<TConfig> extends AbstractCollectionType<TConfig,
 ```
 
 In the Angular Component you've to extend the AbstractCollectionFormFieldComponent and use the 
-`<mw-form-field>` component in the template
+`mwFormField` directive in the template
 
 ```typescript
 @Component({
   selector: 'app-collection-form-field',
   template: `
     <div>
-      <strong>{{fieldType.options.label}}:</strong><br>
-      <div *ngFor="let child of element.controls; let i=index">
-        <mw-form-field [formGroup]="formGroup"
-                       [element]="child"
-                       [fieldType]="fieldType.fieldInstance"
-                       [slots]="slots"
-                       [path]="path + '_'+ i"
-                       [index]="i"></mw-form-field>
+      <strong>{{mwFieldType.options.label}}:</strong><br>
+      <div *ngFor="let child of mwElement.controls; let i=index">
+        <ng-container mwFormField [mwFormGroup]="mwFormGroup"
+                                  [mwElement]="child"
+                                  [mwFieldType]="mwFieldType.fieldInstance"
+                                  [mwSlots]="mwSlots"
+                                  [mwPath]="mwPath + '_'+ i"
+                                  [mwIndex]="i"></ng-container>
         <button (click)="removeEntry(i)">-</button>
       </div>
       <button type="button" (click)="addEntry()">+</button>
     </div>  `
 })
-export class CollectionFormFieldComponent extends AbstractCollectionFormFieldComponent {
+export class CollectionFormFieldComponent extends AbstractCollectionComponent {
   constructor(private readonly cdr: ChangeDetectorRef,
   ) {
     super();

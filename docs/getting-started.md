@@ -39,6 +39,7 @@ Check out the specific guides:
 - [Creating simple form fields](./simple-form-fields.md)
 - [Creating collection form fields](./collection-form-fields.md)
 - [Creating form groups](./form-groups.md)
+- [Creating layout types](./layout-types.md)
 
 
 ## Rendering Forms

@@ -23,7 +23,7 @@ export class InitHandler<T extends AbstractFormControl> {
     }
   }
 
-  constructor(private readonly instance: T,
+  constructor(protected readonly instance: T,
   ) {
   }
 }

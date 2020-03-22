@@ -1,37 +1,24 @@
-import {
-  Component,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  QueryList,
-  SimpleChanges
-} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
-import {AbstractType} from '../form-type/abstract-type';
-import {FormSlotComponent} from '../form-slot/form-slot.component';
+import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {ModelHandler} from '../model-handler';
-import {AbstractGroupType} from '../form-type/abstract-group-type';
+import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {FormArray, FormControl, FormGroup} from '../abstraction';
 import {AbstractFormControl} from '../types';
-
-export interface FormModel {
-  [key: string]: AbstractType<any>;
-}
+import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
+import {AbstractLayoutType} from '../form-type/abstract-layout-type';
+import {FormModel} from '../form-type/abstract-type';
 
 @Component({
   selector: 'mw-form-builder',
   template: `
     <ng-content></ng-content>
     <form [formGroup]="group" (ngSubmit)="submit()">
-      <mw-form-group [element]="group"
-                     [formGroup]="group"
-                     [model]="formModel"
-                     [slots]="slots"
-                     [isRootGroup]="true">
+      <mw-form-group [mwElement]="group"
+                     [mwFormGroup]="group"
+                     [mwFieldType]="fieldType"
+                     [mwSlots]="mwSlots">
       </mw-form-group>
     </form>
   `,
@@ -39,17 +26,19 @@ export interface FormModel {
 })
 export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges {
 
-  @Input()
-  public formModel: FormModel;
+  public fieldType: AbstractGroupType<IGroupTypeOptions>;
 
   @Input()
-  public formData: T;
+  public mwFormModel: FormModel;
+
+  @Input()
+  public mwFormData: T;
 
   @Output()
-  public onSubmit: EventEmitter<T> = new EventEmitter<T>();
+  public mwFormSubmit: EventEmitter<T> = new EventEmitter<T>();
 
-  @ContentChildren(FormSlotComponent, {descendants: true})
-  public slots: QueryList<FormSlotComponent>;
+  @ContentChildren(FormSlotDirective, {descendants: true})
+  public mwSlots: QueryList<FormSlotDirective>;
 
   public group: FormGroup;
 
@@ -60,17 +49,26 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    if ('formModel' in changes && changes.formModel.currentValue) {
+    if ('mwFormModel' in changes && changes.mwFormModel.currentValue) {
       this.rebuildForm();
+      this.fieldType = new FormGroupType({
+        model: this.mwFormModel,
+      });
+
+      Object.assign(this.fieldType, {
+        builderInstance: this,
+        component: FormGroupComponent,
+        control: this.group,
+      });
     }
-    if ('formData' in changes && changes.formData.currentValue) {
-      if (!('formModel' in changes)) {
-        this.initializeCollectionFields(this.group, this.formModel, this.formData);
+    if ('mwFormData' in changes && changes.mwFormData.currentValue) {
+      if (!('mwFormModel' in changes)) {
+        this.initializeCollectionFields(this.group, this.mwFormModel, this.mwFormData);
         this.group.initHandler.setIsInitialized(false);
         this.group.initHandler.setIsInitialized(true);
       }
       if (this.group) {
-        this.group.patchValue(this.formData);
+        this.group.patchValue(this.mwFormData);
       }
     }
   }
@@ -81,12 +79,12 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     if (this.group) {
       res = Object.assign({}, this.group.value);
       groupIsInitialized = this.group.initHandler.isInitialized;
-    } else if (this.formData) {
-      res = Object.assign({}, this.formData);
+    } else if (this.mwFormData) {
+      res = Object.assign({}, this.mwFormData);
     }
 
-    this.group = ModelHandler.build(this.formModel, this);
-    this.initializeCollectionFields(this.group, this.formModel, res);
+    this.group = ModelHandler.build(this.mwFormModel, this);
+    this.initializeCollectionFields(this.group, this.mwFormModel, res);
 
     if (this.group && res) {
       if (groupIsInitialized) {
@@ -104,6 +102,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
       const control = group.get(name);
       if (formType instanceof AbstractGroupType && control instanceof FormGroup) {
         this.initializeCollectionFields(control, formType.options.model, childData);
+      } else if (formType instanceof AbstractLayoutType) {
+        this.initializeCollectionFields(group, formType.options.model, data);
       } else if (formType instanceof AbstractCollectionType && control instanceof FormArray) {
         this.initializeCollectionField(formType, control, childData);
       }
@@ -157,7 +157,7 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
       return;
     }
 
-    this.onSubmit.emit(this.group.value);
+    this.mwFormSubmit.emit(this.group.value);
 
     return this.group.value;
   }
