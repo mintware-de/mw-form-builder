@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta6
+
+Fix
+- Recursive form validation fixed
+- Fixed change detection of dynamic created components 
+
 ## 2.0.0-beta5
 
 Fix
