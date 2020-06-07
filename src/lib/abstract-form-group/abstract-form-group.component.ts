@@ -2,23 +2,16 @@ import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-f
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {KeyValue} from '@angular/common';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
-import {
-  AfterContentInit,
-  ChangeDetectorRef,
-  ComponentFactoryResolver,
-  Injectable,
-  Input,
-  OnChanges,
-  QueryList,
-  SimpleChanges,
-  ViewChildren,
-} from '@angular/core';
+import {ChangeDetectorRef, ComponentFactoryResolver, Directive, Injectable, Input, QueryList, ViewChildren} from '@angular/core';
+import {OnChanges, SimpleChanges} from '@angular/core';
+import {AfterContentInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup} from '../abstraction';
 import {AbstractFormControl} from '../types';
 import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {FieldInstanceHelper} from '../field-instance-helper';
 
 // noinspection JSUnusedGlobalSymbols
+@Directive()
 @Injectable()
 export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupType<IGroupTypeOptions>>
   extends AbstractFormFieldComponent<FormType> implements OnChanges, AfterContentInit {

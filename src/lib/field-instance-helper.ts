@@ -2,7 +2,8 @@ import {AbstractFormFieldComponent} from './abstract-form-field/abstract-form-fi
 import {FormArray, FormControl, FormGroup} from './abstraction';
 import {AbstractControl} from '@angular/forms';
 import {AbstractType} from './form-type/abstract-type';
-import {OnChanges, QueryList, SimpleChange} from '@angular/core';
+import {QueryList} from '@angular/core';
+import {OnChanges, SimpleChange} from '@angular/core';
 import {FormSlotDirective} from './form-slot/form-slot.directive';
 
 export class FieldInstanceHelper {

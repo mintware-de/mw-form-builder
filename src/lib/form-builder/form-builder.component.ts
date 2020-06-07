@@ -1,4 +1,5 @@
-import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList} from '@angular/core';
+import {OnChanges, SimpleChanges} from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
 import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {ModelHandler} from '../model-handler';

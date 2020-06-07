@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0
+
+Change
+- Added a version constraint for Angular 9
+
 ## 2.0.0-beta6
 
 Fix

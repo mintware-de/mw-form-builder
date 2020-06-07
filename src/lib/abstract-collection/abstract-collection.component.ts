@@ -2,9 +2,10 @@ import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {ModelHandler} from '../model-handler';
 import {FormArray} from '../abstraction';
-import {Input} from '@angular/core';
+import {Directive, Input} from '@angular/core';
 
 // noinspection JSUnusedGlobalSymbols
+@Directive()
 export abstract class AbstractCollectionComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
 
   @Input()

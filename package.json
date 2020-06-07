@@ -1,5 +1,5 @@
 {
-  "name": "mw-form-builder",
+  "name": "@mintware-de/form-builder",
   "author": {
     "name": "Julian Finkler",
     "email": "julian@mintware.de",
@@ -16,10 +16,10 @@
     "type": "git"
   },
   "license": "MIT",
-  "version": "2.0.0-beta6",
+  "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": "^7.2.0 || ^8.0.0",
-    "@angular/core": "^7.2.0 || ^8.0.0",
-    "@angular/forms": "^7.2.0 || ^8.0.0"
+    "@angular/common": "^7.2.0 || ^8.0.0 || ^9.0.0",
+    "@angular/core": "^7.2.0 || ^8.0.0 || ^9.0.0",
+    "@angular/forms": "^7.2.0 || ^8.0.0 || ^9.0.0"
   }
 }

@@ -1,4 +1,5 @@
-import {AfterViewInit, Directive, ElementRef, Input, ViewContainerRef} from '@angular/core';
+import {Directive, ElementRef, Input, ViewContainerRef} from '@angular/core';
+import {AfterViewInit} from '@angular/core';
 
 @Directive({
   selector: '[mwFormSlot]',
