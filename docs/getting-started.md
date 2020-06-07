@@ -1,9 +1,9 @@
-# Getting started with the mw-form-builder
+# Getting started with the form builder
 
 ## Installation
 You can install this package using NPM:
 ```bash
-$ npm i -d mw-form-builder
+$ npm i -d @mintware-de/form-builder
 ```
 
 To use the form builder, you need to import the FormBuilderModule and the default Angular ReactiveFormsModule:
@@ -11,7 +11,7 @@ To use the form builder, you need to import the FormBuilderModule and the defaul
 ```typescript
 import {NgModule} from "@angular/core";
 import {ReactiveFormsModule} from "@angular/forms";
-import {FormBuilderModule} from "mw-form-builder";
+import {FormBuilderModule} from "@mintware-de/form-builder";
 
 @NgModule({
   imports: [
@@ -39,6 +39,7 @@ Check out the specific guides:
 - [Creating simple form fields](./simple-form-fields.md)
 - [Creating collection form fields](./collection-form-fields.md)
 - [Creating form groups](./form-groups.md)
+- [Creating layout types](./layout-types.md)
 
 
 ## Rendering Forms

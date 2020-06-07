@@ -1,72 +1,96 @@
-import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
-import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
-import {AbstractType} from '../form-type/abstract-type';
-import {FormSlotComponent} from '../form-slot/form-slot.component';
+import {Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList} from '@angular/core';
+import {OnChanges, SimpleChanges} from '@angular/core';
+import {ValidationErrors} from '@angular/forms';
+import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {ModelHandler} from '../model-handler';
-import {AbstractGroupType} from '../form-type/abstract-group-type';
+import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
-
-export interface FormModel {
-  [key: string]: AbstractType<any>;
-}
+import {FormArray, FormControl, FormGroup} from '../abstraction';
+import {AbstractFormControl} from '../types';
+import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
+import {AbstractLayoutType} from '../form-type/abstract-layout-type';
+import {FormModel} from '../form-type/abstract-type';
 
 @Component({
   selector: 'mw-form-builder',
   template: `
     <ng-content></ng-content>
-    <form [formGroup]="group" (ngSubmit)="submit()" #form>
-      <mw-form-group #fromGroup [element]="group" [formGroup]="group" [model]="formModel" [slots]="slots">
+    <form [formGroup]="group" (ngSubmit)="submit()">
+      <mw-form-group [mwElement]="group"
+                     [mwFormGroup]="group"
+                     [mwFieldType]="fieldType"
+                     [mwSlots]="mwSlots">
       </mw-form-group>
     </form>
   `,
   styles: []
 })
-export class FormBuilderComponent implements OnInit, OnChanges {
+export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges {
+
+  public fieldType: AbstractGroupType<IGroupTypeOptions>;
 
   @Input()
-  public formModel: FormModel;
+  public mwFormModel: FormModel;
 
   @Input()
-  public formData: { [key: string]: any };
+  public mwFormData: T;
 
   @Output()
-  public onSubmit: EventEmitter<any> = new EventEmitter<any>();
+  public mwFormSubmit: EventEmitter<T> = new EventEmitter<T>();
 
-  @ContentChildren(FormSlotComponent, {descendants: true})
-  public slots: QueryList<FormSlotComponent>;
+  @ContentChildren(FormSlotDirective, {descendants: true})
+  public mwSlots: QueryList<FormSlotDirective>;
 
   public group: FormGroup;
 
   public ngOnInit(): void {
-    this.rebuildForm();
+    if (this.group == null) {
+      this.rebuildForm();
+    }
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('formModel') && changes.formModel.currentValue != null) {
+    if ('mwFormModel' in changes && changes.mwFormModel.currentValue) {
       this.rebuildForm();
+      this.fieldType = new FormGroupType({
+        model: this.mwFormModel,
+      });
+
+      Object.assign(this.fieldType, {
+        builderInstance: this,
+        component: FormGroupComponent,
+        control: this.group,
+      });
     }
-    if (changes.hasOwnProperty('formData') && changes.formData.currentValue != null) {
-      if (!changes.hasOwnProperty('formModel')) {
-        this.initializeCollectionFields(this.group, this.formModel, this.formData);
+    if ('mwFormData' in changes && changes.mwFormData.currentValue) {
+      if (!('mwFormModel' in changes)) {
+        this.initializeCollectionFields(this.group, this.mwFormModel, this.mwFormData);
+        this.group.initHandler.setIsInitialized(false);
+        this.group.initHandler.setIsInitialized(true);
       }
-      if (this.group != null) {
-        this.group.patchValue(this.formData);
+      if (this.group) {
+        this.group.patchValue(this.mwFormData);
       }
     }
   }
 
   public rebuildForm(): void {
-    let res = {};
-    if (this.group != null) {
+    let res = null;
+    let groupIsInitialized = false;
+    if (this.group) {
       res = Object.assign({}, this.group.value);
-    } else if (this.formData != null) {
-      res = Object.assign({}, this.formData);
+      groupIsInitialized = this.group.initHandler.isInitialized;
+    } else if (this.mwFormData) {
+      res = Object.assign({}, this.mwFormData);
     }
 
-    this.buildForm();
-    this.initializeCollectionFields(this.group, this.formModel, res);
+    this.group = ModelHandler.build(this.mwFormModel, this);
+    this.initializeCollectionFields(this.group, this.mwFormModel, res);
 
-    if (this.group != null) {
+    if (this.group && res) {
+      if (groupIsInitialized) {
+        this.group.initHandler.setIsInitialized(true);
+      }
       this.group.patchValue(res);
     }
   }
@@ -74,79 +98,77 @@ export class FormBuilderComponent implements OnInit, OnChanges {
   private initializeCollectionFields(group: FormGroup, model: FormModel, data: any): void {
     Object.keys(model).forEach((name) => {
       const formType = model[name];
-      const childData = (data != null && data.hasOwnProperty(name)) ? data[name] : null;
+      const childData = (data && name in data) ? data[name] : null;
 
       const control = group.get(name);
-      if (formType instanceof AbstractGroupType) {
-        this.initializeCollectionFields(control as FormGroup, (formType as AbstractGroupType<any>).options.model, childData);
-      } else if (formType instanceof AbstractCollectionType) {
-        this.initializeCollectionField(formType, control as FormArray, childData);
+      if (formType instanceof AbstractGroupType && control instanceof FormGroup) {
+        this.initializeCollectionFields(control, formType.options.model, childData);
+      } else if (formType instanceof AbstractLayoutType) {
+        this.initializeCollectionFields(group, formType.options.model, data);
+      } else if (formType instanceof AbstractCollectionType && control instanceof FormArray) {
+        this.initializeCollectionField(formType, control, childData);
       }
     });
   }
 
   private initializeCollectionField(collection: AbstractCollectionType<any, any>, array: FormArray, data?: Array<any>): void {
     const numberOfEntries = Array.isArray(data) ? data.length : 0;
-    [...new Array(array.controls.length).keys()].forEach((n) => array.removeAt(n));
+
+    array.controls.splice(0, array.controls.length);
     if (numberOfEntries === 0) {
       return;
     }
 
     const fieldInstance = collection.fieldInstance;
-    const isGroup = fieldInstance instanceof AbstractGroupType;
-    const isCollection = !isGroup && fieldInstance instanceof AbstractCollectionType;
-    const isFormField = !isCollection && fieldInstance instanceof AbstractType;
 
     for (let i = 0; i < numberOfEntries; i++) {
-      if (isGroup) {
-        const childModel = (fieldInstance as AbstractGroupType<any>).options.model;
-        const childFormGroup = ModelHandler.build(childModel, this);
-        childFormGroup.setParent(array);
-
-        if (fieldInstance.disabled) {
-          childFormGroup.disable();
-        }
-
-        this.initializeCollectionFields(childFormGroup, childModel, data[i]);
-        array.controls.push(childFormGroup);
-      } else if (isCollection) {
-        const childArray = new FormArray([], fieldInstance.validators);
-        childArray.setParent(array);
-
-        if (fieldInstance.disabled) {
-          childArray.disable();
-        }
-
-        this.initializeCollectionField(fieldInstance as AbstractCollectionType<any, any>, childArray, data[i]);
-        array.controls.push(childArray);
-      } else if (isFormField) {
-        array.controls.push(new FormControl({value: null, disabled: fieldInstance.disabled}, fieldInstance.validators));
+      const control: AbstractFormControl = ModelHandler.buildSingleField(fieldInstance, this);
+      if (!control) {
+        continue;
       }
+      if (fieldInstance instanceof AbstractGroupType && control instanceof FormGroup) {
+        control.setParent(array);
+
+        if (fieldInstance.disabled) {
+          control.disable();
+        }
+
+        this.initializeCollectionFields(control, fieldInstance.options.model, data[i]);
+      } else if (fieldInstance instanceof AbstractCollectionType && control instanceof FormArray) {
+        control.setParent(array);
+
+        if (fieldInstance.disabled) {
+          control.disable();
+        }
+
+        this.initializeCollectionField(fieldInstance, control, data[i]);
+      }
+      array.controls.push(control);
     }
   }
 
-  /**
-   * This method builds the FormGroup
-   */
-  private buildForm(): void {
-    this.group = ModelHandler.build(this.formModel, this);
-  }
-
-
-  public submit(): any {
-    Object.keys(this.group.controls).forEach((field) => {
-      const control = this.group.get(field);
-      control.markAsDirty();
-      control.updateValueAndValidity();
-    });
+  public submit(): T {
+    this.validateAllFormFields(this.group);
 
     if (!this.group.valid) {
       return;
     }
 
-    this.onSubmit.emit(this.group.value);
+    this.mwFormSubmit.emit(this.group.value);
 
     return this.group.value;
+  }
+
+  private validateAllFormFields(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(field => {
+      const control = formGroup.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({onlySelf: true});
+        control.updateValueAndValidity({onlySelf: true});
+      } else if (control instanceof FormGroup) {
+        this.validateAllFormFields(control);
+      }
+    });
   }
 
   public getErrors(group?: FormGroup | FormArray): { [key: string]: ValidationErrors } | ValidationErrors[] | null {
@@ -161,8 +183,8 @@ export class FormBuilderComponent implements OnInit, OnChanges {
       idx++;
       const control = group.get(name);
       if (control instanceof FormArray || control instanceof FormGroup) {
-        const tmpErrors = this.getErrors(control as (FormArray | FormGroup));
-        if (tmpErrors != null) {
+        const tmpErrors = this.getErrors(control);
+        if (tmpErrors) {
           errors[name] = tmpErrors;
         }
       } else if (control instanceof FormControl) {
