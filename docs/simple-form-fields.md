@@ -24,7 +24,7 @@ It holds the type of the component and set up the validators. It also handles th
 
 ```typescript
 import {ValidatorFn, Validators} from '@angular/forms';
-import {AbstractType} from 'mw-form-builder';
+import {AbstractType} from '@mintware-de/form-builder';
 
 export class TextFormType extends AbstractType<ITextFormTypeConfiguration> {
 

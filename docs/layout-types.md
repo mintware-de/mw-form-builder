@@ -54,7 +54,7 @@ import {
   FormModel,
   IGroupTypeOptions,
   AbstractLayoutComponent,
-} from 'mw-form-builder';
+} from '@mintware-de/form-builder';
 import {Component} from '@angular/core';
 
 /**
