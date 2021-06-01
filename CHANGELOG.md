@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.1
+
+Fix
+- Fixed ExpressionChangedAfterItHasBeenCheckedError.
+
+Change:
+- Copyright updated.
+- Added shorthand getters for valid and invalid.
+
 ## 2.0.0
 
 Change

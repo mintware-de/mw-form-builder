@@ -43,6 +43,14 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
   public group: FormGroup;
 
+  public get valid(): boolean {
+    return this.group?.valid ?? true;
+  }
+
+  public get invalid(): boolean {
+    return this.group?.invalid ?? false;
+  }
+
   public ngOnInit(): void {
     if (this.group == null) {
       this.rebuildForm();
