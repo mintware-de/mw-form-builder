@@ -99,6 +99,12 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   }
 
   private renderElementsInSlots(): void {
+    window.setTimeout(() => {
+      this.renderElementsInSlotsInternal();
+    }, 0);
+  }
+
+  private renderElementsInSlotsInternal(): void {
     if (!(this.mwSlots || this.mySlots)) {
       return;
     }
