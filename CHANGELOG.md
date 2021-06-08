@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1
+
+Fix:
+- The builderInstance field was not set on AbstractLayoutType
+
 ## 2.1.0
 
 Features:

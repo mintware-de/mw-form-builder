@@ -21,22 +21,21 @@ export class ModelHandler {
 
       if (field instanceof AbstractLayoutType) {
         this.handleModel(field.options.model, group, builderInstance);
-        return;
+      } else {
+        const control = ModelHandler.buildSingleField(field, builderInstance);
+        if (!control) {
+          return;
+        }
+        control.setParent(group);
+        if (field.disabled) {
+          control.disable();
+        }
+        group.addControl(name, control);
+        field.control = control;
       }
-
-      const control = ModelHandler.buildSingleField(field, builderInstance);
-      if (!control) {
-        return;
-      }
-      control.setParent(group);
-      if (field.disabled) {
-        control.disable();
-      }
-      group.addControl(name, control);
       if (field.builderInstance == null && builderInstance) {
         field.builderInstance = builderInstance;
       }
-      field.control = control;
     });
   }
 
