@@ -1,10 +1,14 @@
 import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
 import {FormBuilderComponent} from '../form-builder/form-builder.component';
 import {AbstractFormControl, Constructor} from '../types';
+import {AbstractGroupType, IGroupTypeOptions} from './abstract-group-type';
+import {AbstractLayoutType} from './abstract-layout-type';
 
-export interface FormModel {
-  [key: string]: AbstractType<any>;
-}
+
+export type FormModel<T = any> =
+  { [p in keyof T]?: AbstractGroupType<IGroupTypeOptions<p>, p> | AbstractType<any> } |
+  { [p in Exclude<string, keyof T>]: AbstractLayoutType<IGroupTypeOptions<T>, T> }
+  ;
 
 export abstract class AbstractType<T> {
   public abstract readonly component: Constructor;

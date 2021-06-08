@@ -14,7 +14,7 @@ export class ModelHandler {
 
   private static handleModel(model: FormModel, group: FormGroup, builderInstance: FormBuilderComponent): void {
     Object.keys(model).forEach((name) => {
-      const field = model[name];
+      const field: AbstractType<any> = model[name];
       if (!field) {
         return;
       }

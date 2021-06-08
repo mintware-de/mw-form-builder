@@ -3,7 +3,7 @@ import {AbstractFormGroupComponent} from '../abstract-form-group/abstract-form-g
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {Constructor} from '../types';
 
-export class FormGroupType extends AbstractGroupType<IGroupTypeOptions> {
+export class FormGroupType<T = any> extends AbstractGroupType<IGroupTypeOptions<T>, T> {
   public readonly component: Constructor = FormGroupComponent;
 }
 

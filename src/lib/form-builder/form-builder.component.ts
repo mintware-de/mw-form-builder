@@ -27,10 +27,10 @@ import {FormModel} from '../form-type/abstract-type';
 })
 export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges {
 
-  public fieldType: AbstractGroupType<IGroupTypeOptions>;
+  public fieldType: AbstractGroupType<IGroupTypeOptions<T>, T>;
 
   @Input()
-  public mwFormModel: FormModel;
+  public mwFormModel: FormModel<T>;
 
   @Input()
   public mwFormData: T;
@@ -60,7 +60,7 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   public ngOnChanges(changes: SimpleChanges): void {
     if ('mwFormModel' in changes && changes.mwFormModel.currentValue) {
       this.rebuildForm();
-      this.fieldType = new FormGroupType({
+      this.fieldType = new FormGroupType<T>({
         model: this.mwFormModel,
       });
 

@@ -1,8 +1,14 @@
 # Changelog
 
+## 2.1.0
+
+Features:
+- Added a Type Parameter for the FormModel to improve autocomplete.
+- Added Angular 10 and 11 version constraints to the package.json
+
 ## 2.0.1
 
-Fix
+Fix:
 - Fixed ExpressionChangedAfterItHasBeenCheckedError.
 
 Change:
