@@ -6,7 +6,8 @@ import {Directive, Input} from '@angular/core';
 
 // noinspection JSUnusedGlobalSymbols
 @Directive()
-export abstract class AbstractCollectionComponent extends AbstractFormFieldComponent<AbstractCollectionType<any, any>> {
+export abstract class AbstractCollectionComponent<TConfig = any, T = any>
+  extends AbstractFormFieldComponent<AbstractCollectionType<TConfig, T>> {
 
   @Input()
   public mwElement: FormArray;
@@ -28,6 +29,6 @@ export abstract class AbstractCollectionComponent extends AbstractFormFieldCompo
     }
 
     newControl.initHandler.setIsInitialized(true);
-    this.mwElement.controls.push(newControl);
+    this.mwElement.push(newControl);
   }
 }
