@@ -8,7 +8,6 @@ Change:
 Fix:
 - Using `FormArray.push(...)` instead of `FormArray.controls.push(...)` to ensure FormGroup updates.  
 
-
 ## 2.1.1
 
 Fix:
