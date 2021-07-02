@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.3
+
+Fix:
+- Fixed the order of the form fields in Firefox.
+
 ## 2.1.2
 
 Change:

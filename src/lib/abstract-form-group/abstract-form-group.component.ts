@@ -1,6 +1,5 @@
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
-import {KeyValue} from '@angular/common';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
 import {ChangeDetectorRef, ComponentFactoryResolver, Directive, Injectable, Input, QueryList, ViewChildren} from '@angular/core';
 import {OnChanges, SimpleChanges} from '@angular/core';
@@ -170,7 +169,5 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public orderAsGiven(a: KeyValue<string, any>, b: KeyValue<string, any>): number {
-    return a || b ? 1 : 0;
-  }
+  public orderAsGiven = (_: any, __: any): number => 0;
 }
