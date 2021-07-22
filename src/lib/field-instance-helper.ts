@@ -32,7 +32,7 @@ export class FieldInstanceHelper {
     instance.mwIndex = changes.mwIndex.currentValue;
 
     if ('ngOnChanges' in instance) {
-      (instance as OnChanges).ngOnChanges(changes);
+      (instance as any as OnChanges).ngOnChanges(changes);
     }
   }
 
