@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+
+Feature:
+- Updated the peerDependencies for Angular 12 
+
 ## 2.1.3
 
 Fix:
