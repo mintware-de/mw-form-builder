@@ -1,11 +1,10 @@
-import {Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList} from '@angular/core';
-import {OnChanges, SimpleChanges} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
 import {ValidationErrors} from '@angular/forms';
 import {FormSlotDirective} from '../form-slot/form-slot.directive';
 import {ModelHandler} from '../model-handler';
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
-import {FormArray, FormControl, FormGroup} from '../abstraction';
+import {FormArray, FormControl, FormGroup, IFormBuilder} from '../abstraction';
 import {AbstractFormControl} from '../types';
 import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
@@ -25,7 +24,7 @@ import {FormModel} from '../form-type/abstract-type';
   `,
   styles: []
 })
-export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges {
+export class FormBuilderComponent<T extends { [key: string]: any } = {}> implements OnInit, OnChanges, IFormBuilder {
 
   public fieldType: AbstractGroupType<IGroupTypeOptions<T>, T>;
 

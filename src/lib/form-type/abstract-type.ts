@@ -1,8 +1,8 @@
 import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
-import {FormBuilderComponent} from '../form-builder/form-builder.component';
 import {AbstractFormControl, Constructor} from '../types';
 import {AbstractGroupType, IGroupTypeOptions} from './abstract-group-type';
 import {AbstractLayoutType} from './abstract-layout-type';
+import {IFormBuilder} from '../abstraction';
 
 
 export type FormModel<T = any> =
@@ -13,7 +13,7 @@ export type FormModel<T = any> =
 export abstract class AbstractType<T> {
   public abstract readonly component: Constructor;
 
-  public builderInstance: FormBuilderComponent;
+  public builderInstance: IFormBuilder;
 
   public control: AbstractFormControl;
 

@@ -1,18 +1,17 @@
-import {FormBuilderComponent} from './form-builder/form-builder.component';
 import {AbstractCollectionType} from './form-type/abstract-collection-type';
 import {AbstractGroupType} from './form-type/abstract-group-type';
 import {AbstractType, FormModel} from './form-type/abstract-type';
-import {FormArray, FormControl, FormGroup} from './abstraction';
+import {FormArray, FormControl, FormGroup, IFormBuilder} from './abstraction';
 import {AbstractLayoutType} from './form-type/abstract-layout-type';
 
 export class ModelHandler {
-  public static build(model: FormModel, builderInstance: FormBuilderComponent): FormGroup {
+  public static build(model: FormModel, builderInstance: IFormBuilder): FormGroup {
     const group = new FormGroup({});
     this.handleModel(model, group, builderInstance);
     return group;
   }
 
-  private static handleModel(model: FormModel, group: FormGroup, builderInstance: FormBuilderComponent): void {
+  private static handleModel(model: FormModel, group: FormGroup, builderInstance: IFormBuilder): void {
     Object.keys(model).forEach((name) => {
       const field: AbstractType<any> = model[name];
       if (!field) {
@@ -40,7 +39,7 @@ export class ModelHandler {
   }
 
   public static buildSingleField(field: AbstractType<any>,
-                                 builderInstance: FormBuilderComponent
+                                 builderInstance: IFormBuilder
   ): FormArray | FormGroup | FormControl | null {
     let component: FormArray | FormGroup | FormControl;
 
@@ -58,7 +57,7 @@ export class ModelHandler {
     return component;
   }
 
-  private static handleArray(field: AbstractCollectionType<any, any>, array: FormArray, builderInstance: FormBuilderComponent): void {
+  private static handleArray(field: AbstractCollectionType<any, any>, array: FormArray, builderInstance: IFormBuilder): void {
     const control = ModelHandler.buildSingleField(field.fieldInstance, builderInstance);
     if (!control) {
       return;

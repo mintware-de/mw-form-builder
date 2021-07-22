@@ -5,6 +5,9 @@
 Feature:
 - Updated the peerDependencies for Angular 12
 
+Change:
+- Extracted an interface of the FormBuilderComponent to remove a cyclic dependency.
+
 BREAKING CHANGE:
 - Dropped support for Angular <10.0.0
 
