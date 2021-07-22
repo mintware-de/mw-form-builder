@@ -1,9 +1,12 @@
 # Changelog
 
-## 2.2.0
+## 3.0.0
 
 Feature:
-- Updated the peerDependencies for Angular 12 
+- Updated the peerDependencies for Angular 12
+
+BREAKING CHANGE:
+- Dropped support for Angular <10.0.0
 
 ## 2.1.3
 
