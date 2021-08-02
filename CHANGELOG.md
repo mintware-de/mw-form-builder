@@ -5,6 +5,11 @@
 Feature:
 - Added a Pre Submit Handler
 
+## 2.2.1
+
+Fix:
+- Fixed the compatibility for pre-Ivy apps.
+
 ## 2.2.0
 
 Feature:
