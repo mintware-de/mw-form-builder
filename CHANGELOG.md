@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.1.0
+
+Feature:
+- Added a Pre Submit Handler
+
+## 2.2.0
+
+Feature:
+- Added a Pre Submit Handler
+
 ## 3.0.0
 
 Feature:

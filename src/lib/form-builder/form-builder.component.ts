@@ -9,6 +9,7 @@ import {AbstractFormControl} from '../types';
 import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
 import {FormModel} from '../form-type/abstract-type';
+import {FormBuilderOptions} from '../form-builder.options';
 
 @Component({
   selector: 'mw-form-builder',
@@ -33,6 +34,9 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
   @Input()
   public mwFormData: T;
+
+  @Output()
+  public mwPreSubmit: EventEmitter<IFormBuilder> = new EventEmitter<IFormBuilder>();
 
   @Output()
   public mwFormSubmit: EventEmitter<T> = new EventEmitter<T>();
@@ -155,6 +159,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   }
 
   public submit(): T {
+    this.preSubmit();
+
     this.validateAllFormFields(this.group);
 
     if (!this.group.valid) {
@@ -164,6 +170,16 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     this.mwFormSubmit.emit(this.group.value);
 
     return this.group.value;
+  }
+
+  private preSubmit(): void {
+    let preSubmitHandler = this.mwPreSubmit.observers.length > 0 ? this.mwPreSubmit.emit.bind(this.mwPreSubmit) : null;
+    if (preSubmitHandler == null) {
+      preSubmitHandler = FormBuilderOptions.preFormSubmit;
+    }
+    if (preSubmitHandler != null) {
+      preSubmitHandler(this);
+    }
   }
 
   private validateAllFormFields(formGroup: FormGroup): void {
