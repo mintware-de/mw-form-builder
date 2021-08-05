@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2
+
+Fix:
+- Fixed the rebuild on changes
+
 ## 3.1.0
 
 Feature:

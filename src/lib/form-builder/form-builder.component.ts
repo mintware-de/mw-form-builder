@@ -61,6 +61,17 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
+    if ('mwFormData' in changes && changes.mwFormData.currentValue) {
+      this.group = null;
+      if (!('mwFormModel' in changes)) {
+        this.rebuildForm();
+        this.group.initHandler.setIsInitialized(false);
+        this.group.initHandler.setIsInitialized(true);
+      }
+      if (this.group) {
+        this.group.patchValue(this.mwFormData);
+      }
+    }
     if ('mwFormModel' in changes && changes.mwFormModel.currentValue) {
       this.rebuildForm();
       this.fieldType = new FormGroupType<T>({
@@ -72,16 +83,6 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
         component: FormGroupComponent,
         control: this.group,
       });
-    }
-    if ('mwFormData' in changes && changes.mwFormData.currentValue) {
-      if (!('mwFormModel' in changes)) {
-        this.initializeCollectionFields(this.group, this.mwFormModel, this.mwFormData);
-        this.group.initHandler.setIsInitialized(false);
-        this.group.initHandler.setIsInitialized(true);
-      }
-      if (this.group) {
-        this.group.patchValue(this.mwFormData);
-      }
     }
   }
 
