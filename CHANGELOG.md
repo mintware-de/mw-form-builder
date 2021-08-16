@@ -1,9 +1,19 @@
 # Changelog
 
+## 2.2.2
+
+Fix:
+- Fixed the rebuild on changes
+
 ## 3.1.0
 
 Feature:
 - Added a Pre Submit Handler
+
+## 2.2.1
+
+Fix:
+- Fixed the compatibility for pre-Ivy apps.
 
 ## 2.2.0
 
