@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1
+
+Fix:
+- Merged the fixes from v2.2.2
+
 ## 2.2.2
 
 Fix:
