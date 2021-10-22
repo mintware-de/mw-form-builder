@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0-alpha.0
+
+Features:
+- Added a ModelMerger to create dummy fields for missing properties in the FormModel.
+
 ## 3.1.1
 
 Fix:
