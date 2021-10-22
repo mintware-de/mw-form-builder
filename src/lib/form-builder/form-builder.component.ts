@@ -10,6 +10,7 @@ import {FormGroupComponent, FormGroupType} from '../form-group/form-group.compon
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
 import {FormModel} from '../form-type/abstract-type';
 import {FormBuilderOptions} from '../form-builder.options';
+import {ModelMerger} from '../model-merger';
 
 @Component({
   selector: 'mw-form-builder',
@@ -46,6 +47,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
   public group: FormGroup;
 
+  private internalFormModel: FormModel<T>;
+
   public get valid(): boolean {
     return this.group?.valid ?? true;
   }
@@ -75,7 +78,7 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     if ('mwFormModel' in changes && changes.mwFormModel.currentValue) {
       this.rebuildForm();
       this.fieldType = new FormGroupType<T>({
-        model: this.mwFormModel,
+        model: this.internalFormModel,
       });
 
       Object.assign(this.fieldType, {
@@ -96,8 +99,9 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
       res = Object.assign({}, this.mwFormData);
     }
 
-    this.group = ModelHandler.build(this.mwFormModel, this);
-    this.initializeCollectionFields(this.group, this.mwFormModel, res);
+    this.rebuildFormModel();
+    this.group = ModelHandler.build(this.internalFormModel, this);
+    this.initializeCollectionFields(this.group, this.internalFormModel, res);
 
     if (this.group && res) {
       if (groupIsInitialized) {
@@ -225,5 +229,11 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
     return (group instanceof FormGroup && Object.keys(errors).length === 0)
     || Array.isArray(errors) && errors.length === 0 ? null : errors;
+  }
+
+  private rebuildFormModel(): void {
+    const merger = new ModelMerger(this.mwFormModel, this.mwFormData);
+    this.internalFormModel = merger.merge();
+    console.log(this.internalFormModel);
   }
 }
