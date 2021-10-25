@@ -9,7 +9,6 @@ export * from './lib/abstract-layout/abstract-layout.component';
 export * from './lib/form-builder/form-builder.component';
 export * from './lib/form-group/form-group.component';
 export * from './lib/form-field/form-field.directive';
-export * from './lib/form-slot/form-slot.directive';
 export * from './lib/form-builder.module';
 export * from './lib/form-builder.options';
 export * from './lib/form-type/abstract-group-type';

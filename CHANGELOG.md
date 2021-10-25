@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.0.0-alpha.1
+
+**BREAKING CHANGE**:
+- Removed the `FormSlotDirective` and `AbstractFormFieldComponent.mwSlots`. Use `AbstractLayoutType`s and the `mwFormField` directive instead.
+- Removed `FormArray`, `FormControl` and `FormGroup` abstractions
+- Removed `AbstractFormFieldComponent.mwSlots`
+- Changed `AbstractFormGroupComponent.elements` to a `<string, AbstractControl>{}` map
+- Removed `AbstractFormGroupComponent.mySlots` and `AbstractFormGroupComponent.renderTargets`
+- Removed `IFormBuilder.mwSlots`
+- Removed `InitHandler`
+
 ## 4.0.0-alpha.0
 
 Features:

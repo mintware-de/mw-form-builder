@@ -1,7 +1,8 @@
 import {AbstractCollectionType} from './form-type/abstract-collection-type';
 import {AbstractGroupType} from './form-type/abstract-group-type';
 import {AbstractType, FormModel} from './form-type/abstract-type';
-import {FormArray, FormControl, FormGroup, IFormBuilder} from './abstraction';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {IFormBuilder} from './abstraction';
 import {AbstractLayoutType} from './form-type/abstract-layout-type';
 
 export class ModelHandler {
@@ -40,7 +41,7 @@ export class ModelHandler {
 
   public static buildSingleField(field: AbstractType<any>,
                                  builderInstance: IFormBuilder
-  ): FormArray | FormGroup | FormControl | null {
+  ): AbstractControl {
     let component: FormArray | FormGroup | FormControl;
 
     if (field instanceof AbstractCollectionType) {

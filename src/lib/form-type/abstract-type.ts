@@ -1,5 +1,5 @@
-import {AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
-import {AbstractFormControl, Constructor} from '../types';
+import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, ValidatorFn} from '@angular/forms';
+import {Constructor} from '../types';
 import {AbstractGroupType, IGroupTypeOptions} from './abstract-group-type';
 import {AbstractLayoutType} from './abstract-layout-type';
 import {IFormBuilder} from '../abstraction';
@@ -15,7 +15,7 @@ export abstract class AbstractType<T> {
 
   public builderInstance: IFormBuilder;
 
-  public control: AbstractFormControl;
+  public control: AbstractControl;
 
   public get asyncValidators(): AsyncValidatorFn[] {
     return null;

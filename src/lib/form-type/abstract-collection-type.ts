@@ -1,6 +1,6 @@
-import {AbstractType} from './abstract-type';
-import {FormArray} from '../abstraction';
 import {ConstructorOf1} from '../types';
+import {FormArray} from '@angular/forms';
+import {AbstractType} from './abstract-type';
 
 export interface ICollectionTypeOptions<T> {
   entrySettings: T;

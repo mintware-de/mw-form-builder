@@ -1,5 +1,5 @@
 import {AbstractType, FormModel} from './abstract-type';
-import {FormGroup} from '../abstraction';
+import {FormGroup} from '@angular/forms';
 
 export interface IGroupTypeOptions<T = any> {
   model: FormModel<T>;

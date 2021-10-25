@@ -48,12 +48,24 @@ You can also render the fields where you want:
 
     <div style="background-color: red">
         Field 1
-        <ng-container mwFormSlot mwFieldName="firstName"></ng-container>
+        <ng-container mwFormField
+                      [mwPath]="fieldPaths.firstName"
+                      [mwElement]="elements.firstName"
+                      [mwFieldType]="mwFieldType.options.model.firstName"
+                      [mwFormGroup]="mwElement"
+                      [mwIndex]="mwIndex"
+        ></ng-container>
     </div>
 
     <div style="background-color: yellow">
         Field 2
-        <ng-container mwFormSlot mwFieldName="surname"></ng-container>
+        <ng-container mwFormField
+                      [mwPath]="fieldPaths.surname"
+                      [mwElement]="elements.surname"
+                      [mwFieldType]="mwFieldType.options.model.surname"
+                      [mwFormGroup]="mwElement"
+                      [mwIndex]="mwIndex"
+        ></ng-container>
     </div>
 
 

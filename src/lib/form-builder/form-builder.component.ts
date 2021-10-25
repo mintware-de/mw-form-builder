@@ -1,11 +1,9 @@
-import {Component, ContentChildren, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges} from '@angular/core';
-import {ValidationErrors} from '@angular/forms';
-import {FormSlotDirective} from '../form-slot/form-slot.directive';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {ModelHandler} from '../model-handler';
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
-import {FormArray, FormControl, FormGroup, IFormBuilder} from '../abstraction';
-import {AbstractFormControl} from '../types';
+import {IFormBuilder} from '../types';
 import {FormGroupComponent, FormGroupType} from '../form-group/form-group.component';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
 import {FormModel} from '../form-type/abstract-type';
@@ -19,8 +17,7 @@ import {ModelMerger} from '../model-merger';
     <form [formGroup]="group" (ngSubmit)="submit()">
       <mw-form-group [mwElement]="group"
                      [mwFormGroup]="group"
-                     [mwFieldType]="fieldType"
-                     [mwSlots]="mwSlots">
+                     [mwFieldType]="fieldType">
       </mw-form-group>
     </form>
   `,
@@ -41,9 +38,6 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
   @Output()
   public mwFormSubmit: EventEmitter<T> = new EventEmitter<T>();
-
-  @ContentChildren(FormSlotDirective, {descendants: true})
-  public mwSlots: QueryList<FormSlotDirective>;
 
   public group: FormGroup;
 
@@ -68,8 +62,6 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
       this.group = null;
       if (!('mwFormModel' in changes)) {
         this.rebuildForm();
-        this.group.initHandler.setIsInitialized(false);
-        this.group.initHandler.setIsInitialized(true);
       }
       if (this.group) {
         this.group.patchValue(this.mwFormData);
@@ -91,10 +83,8 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
 
   public rebuildForm(): void {
     let res = null;
-    let groupIsInitialized = false;
     if (this.group) {
       res = Object.assign({}, this.group.value);
-      groupIsInitialized = this.group.initHandler.isInitialized;
     } else if (this.mwFormData) {
       res = Object.assign({}, this.mwFormData);
     }
@@ -104,9 +94,6 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     this.initializeCollectionFields(this.group, this.internalFormModel, res);
 
     if (this.group && res) {
-      if (groupIsInitialized) {
-        this.group.initHandler.setIsInitialized(true);
-      }
       this.group.patchValue(res);
     }
   }
@@ -138,7 +125,7 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     const fieldInstance = collection.fieldInstance;
 
     for (let i = 0; i < numberOfEntries; i++) {
-      const control: AbstractFormControl = ModelHandler.buildSingleField(fieldInstance, this);
+      const control: AbstractControl = ModelHandler.buildSingleField(fieldInstance, this);
       if (!control) {
         continue;
       }
@@ -187,13 +174,13 @@ export class FormBuilderComponent<T extends { [key: string]: any } = {}> impleme
     }
   }
 
-  private validateAllFormFields(formGroup: FormGroup): void {
+  private validateAllFormFields(formGroup: FormGroup | FormArray): void {
     Object.keys(formGroup.controls).forEach(field => {
       const control = formGroup.get(field);
       if (control instanceof FormControl) {
         control.markAsTouched({onlySelf: true});
         control.updateValueAndValidity({onlySelf: true});
-      } else if (control instanceof FormGroup) {
+      } else if (control instanceof FormGroup || control instanceof FormArray) {
         this.validateAllFormFields(control);
       }
     });

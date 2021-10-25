@@ -1,8 +1,8 @@
 import {AbstractCollectionType} from '../form-type/abstract-collection-type';
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {ModelHandler} from '../model-handler';
-import {FormArray} from '../abstraction';
 import {Directive, Input} from '@angular/core';
+import {FormArray} from '@angular/forms';
 
 // noinspection JSUnusedGlobalSymbols
 @Directive()
@@ -14,7 +14,7 @@ export abstract class AbstractCollectionComponent<TConfig = any, T = any>
 
   // noinspection JSUnusedGlobalSymbols
   public removeEntry(index: number): void {
-    this.mwElement.removeAt(index);
+    this.mwElement?.removeAt(index);
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -28,7 +28,6 @@ export abstract class AbstractCollectionComponent<TConfig = any, T = any>
       return;
     }
 
-    newControl.initHandler.setIsInitialized(true);
-    this.mwElement.push(newControl);
+    this.mwElement?.push(newControl);
   }
 }

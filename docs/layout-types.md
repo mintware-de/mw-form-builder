@@ -107,7 +107,6 @@ export class ColumnLayout extends RowColumnLayout {
   <!-- And create a mwFormField of each children -->
   <ng-container mwFormField
                 [mwFieldType]="kv.value"
-                [mwSlots]="mwSlots"
                 [mwIndex]="indexFromParent"
                 [mwFormGroup]="mwFormGroup"
                 [mwPath]="fieldPaths[kv.key]"

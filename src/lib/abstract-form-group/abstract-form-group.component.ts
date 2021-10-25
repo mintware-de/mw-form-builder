@@ -1,33 +1,23 @@
 import {AbstractFormFieldComponent} from '../abstract-form-field/abstract-form-field.component';
 import {AbstractGroupType, IGroupTypeOptions} from '../form-type/abstract-group-type';
 import {AbstractLayoutType} from '../form-type/abstract-layout-type';
-import {ChangeDetectorRef, ComponentFactoryResolver, Directive, Injectable, Input, QueryList, ViewChildren} from '@angular/core';
-import {OnChanges, SimpleChanges} from '@angular/core';
-import {AfterContentInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup} from '../abstraction';
-import {AbstractFormControl} from '../types';
-import {FormSlotDirective} from '../form-slot/form-slot.directive';
-import {FieldInstanceHelper} from '../field-instance-helper';
+import {ChangeDetectorRef, ComponentFactoryResolver, Directive, Injectable, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 
 // noinspection JSUnusedGlobalSymbols
 @Directive()
 @Injectable()
 export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupType<IGroupTypeOptions>>
-  extends AbstractFormFieldComponent<FormType> implements OnChanges, AfterContentInit {
+  extends AbstractFormFieldComponent<FormType> implements OnChanges {
 
   public groupPath: string = '';
   public indexFromParent?: number = null;
 
   public fieldPaths: { [key: string]: string } = {};
-  public elements: { [key: string]: AbstractFormControl } = {};
+  public elements: { [key: string]: AbstractControl } = {};
 
   @Input()
   public mwElement: FormGroup;
-
-  @ViewChildren(FormSlotDirective)
-  public mySlots: QueryList<FormSlotDirective>;
-
-  public renderTargets: { [key: string]: FormSlotDirective } = {};
 
   constructor(protected readonly cfr: ComponentFactoryResolver,
               protected readonly cdr: ChangeDetectorRef,
@@ -77,97 +67,11 @@ export abstract class AbstractFormGroupComponent<FormType extends AbstractGroupT
       } else {
         all[fieldName] = this.mwElement.get(fieldName);
       }
+
+
       return all;
-    }, {});
-
-    let wasRendered = false;
-    if ('mwSlots' in changes && changes.mwSlots.currentValue) {
-      this.renderElementsInSlots();
-      wasRendered = true;
-    }
-    if (!wasRendered && 'mySlots' in changes && changes.mySlots.currentValue) {
-      this.renderElementsInSlots();
-    }
+    }, {} as { [key: string]: AbstractControl });
   }
-
-  public ngAfterContentInit(): void {
-    if (this.mySlots) {
-      this.renderElementsInSlots();
-      this.cdr.detectChanges();
-    }
-  }
-
-  private renderElementsInSlots(): void {
-    window.setTimeout(() => {
-      this.renderElementsInSlotsInternal();
-    }, 0);
-  }
-
-  private renderElementsInSlotsInternal(): void {
-    if (!(this.mwSlots || this.mySlots)) {
-      return;
-    }
-    this.createRenderTargets();
-
-    Object.keys(this.renderTargets).forEach((name) => {
-      if (!(name in this.renderTargets)) {
-        return;
-      }
-
-      this.renderTargets[name].setup((viewRef, elRef) => {
-        viewRef.clear();
-
-        const factory = this.cfr.resolveComponentFactory<AbstractFormFieldComponent<any>>(this.mwFieldType.options.model[name].component);
-
-        const component = viewRef.createComponent(factory);
-
-        const isGroup = this.mwFieldType.options.model[name] instanceof AbstractGroupType;
-        FieldInstanceHelper.setupFieldInstance(component.instance, {
-          mwFormGroup: isGroup ? this.elements[name] : this.mwFormGroup,
-          mwElement: this.elements[name],
-          mwFieldType: this.mwFieldType.options.model[name],
-          mwSlots: this.mwSlots,
-          mwPath: this.fieldPaths[name],
-          mwIndex: this.indexFromParent,
-        });
-
-        const host = elRef.nativeElement;
-        if (host instanceof HTMLElement && !host.contains(component.location.nativeElement)) {
-          host.appendChild(component.location.nativeElement);
-        }
-
-        component.changeDetectorRef.detectChanges();
-      });
-    });
-
-    this.mwElement.initHandler.setIsInitialized(true);
-    this.cdr.detectChanges();
-  }
-
-  private createRenderTargets(): void {
-    const groupPath = this.groupPath;
-    if (this.mwSlots) {
-      this.mwSlots.toArray().forEach((slot) => {
-        if (slot.mwFieldName.substr(0, groupPath.length) !== groupPath) {
-          return;
-        }
-        let name = slot.mwFieldName.substr(groupPath.length, slot.mwFieldName.length - groupPath.length);
-        if (name.startsWith('.')) {
-          name = name.substr(1);
-        }
-        if (name.indexOf('.') < 0 && name !== '') {
-          this.renderTargets[name] = slot;
-        }
-      });
-    }
-
-    if (this.mySlots) {
-      this.mySlots.toArray().forEach((slot) => {
-        this.renderTargets[slot.mwFieldName] = slot;
-      });
-    }
-  }
-
   // noinspection JSUnusedGlobalSymbols
   public orderAsGiven = (_: any, __: any): number => 0;
 }

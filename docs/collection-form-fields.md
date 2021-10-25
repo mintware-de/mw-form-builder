@@ -36,7 +36,6 @@ In the Angular Component you've to extend the AbstractCollectionFormFieldCompone
         <ng-container mwFormField [mwFormGroup]="mwFormGroup"
                                   [mwElement]="child"
                                   [mwFieldType]="mwFieldType.fieldInstance"
-                                  [mwSlots]="mwSlots"
                                   [mwPath]="mwPath + '_'+ i"
                                   [mwIndex]="i"></ng-container>
         <button (click)="removeEntry(i)">-</button>
